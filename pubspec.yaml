@@ -10,10 +10,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  retrofit: ^2.0.0
+  logger: ^1.0.0
+  dio: ^4.0.0
+  japx: ^2.0.3
+  json_annotation: ^4.0.1
+  json_serializable: ^4.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  retrofit_generator: ^2.0.0
+  build_runner: ^2.0.5
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

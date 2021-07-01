@@ -1,3 +1,3 @@
-# flutter_sdk
+# dart_sdk
 
-TokenD Kotlin SDK This library facilitates interaction with TokenD-based system from Flutter applications including Android and IOS apps.
+TokenD Dart SDK This library facilitates interaction with TokenD-based system from Flutter applications including Android and IOS apps.
