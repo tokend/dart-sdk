@@ -1,10 +1,9 @@
 name: dart_sdk
 description: TokenD Dart SDK This library facilitates interaction with TokenD-based system from Flutter applications including Android and IOS apps.
 version: 0.0.1
-homepage:
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.13.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
