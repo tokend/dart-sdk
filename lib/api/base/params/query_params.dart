@@ -13,18 +13,21 @@ class _AnonymousQueryParams implements QueryParams {
 class QueryParamsBuilder {
   final Map<String, dynamic> map = {};
 
-  void filter(String key, dynamic value) {
+  QueryParamsBuilder filter(String key, dynamic value) {
     map.addAll({"filter[$key]": value});
+    return this;
   }
 
-  void param(String key, dynamic value) {
+  QueryParamsBuilder param(String key, dynamic value) {
     if (value != null) {
       map.addAll({key: value});
     }
+    return this;
   }
 
-  void append(QueryParams extra) {
+  QueryParamsBuilder append(QueryParams extra) {
     map.addAll(extra.map());
+    return this;
   }
 
   QueryParams build() {
