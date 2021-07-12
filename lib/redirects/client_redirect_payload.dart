@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dart_sdk/redirects/client_redirect_type.dart';
 import 'package:dart_sdk/utils/extensions/encoding.dart';
 
@@ -27,7 +29,8 @@ class ClientRedirectPayload {
     try {
       final decodedPayload = encodedPayload.decodeBase64();
       if (decodedPayload != null) {
-        //TODO: implement parsing ClientRedirectPayload
+        var payloadJson = jsonDecode(decodedPayload.toString());
+        return ClientRedirectPayload.fromJson(payloadJson);
       }
     } catch (exception) {
       return null;
