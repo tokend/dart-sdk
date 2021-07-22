@@ -9,7 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  retrofit: ^2.0.0
+  dart_wallet:
+    git:
+      url: https://github.com/tokend/dart-wallet
+      ref: dev
   logger: ^1.0.0
   dio: ^4.0.0
   japx: ^2.0.3
@@ -19,7 +22,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  retrofit_generator: ^2.0.0
   build_runner: ^2.0.5
 
 
