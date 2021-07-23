@@ -20,8 +20,8 @@ class CustomRequestsApi {
     return _customRequestService.get(_dio, url, query ?? {}, headers ?? {});
   }
 
-  Future<Map<String, dynamic>> get(String url, Map<String, dynamic>? query,
-      Map<String, dynamic>? headers) async {
+  Future<Map<String, dynamic>> get(String url,
+      {Map<String, dynamic>? query, Map<String, dynamic>? headers}) async {
     Response response = await _doGet(url, query, headers);
     return Japx.decode(jsonDecode(response.data));
   }
@@ -35,9 +35,11 @@ class CustomRequestsApi {
         _dio, url, body, query ?? {}, headers ?? {});
   }
 
-  Future<Map<String, dynamic>> post(String url, Map<String, dynamic>? query,
-      dynamic body, Map<String, dynamic>? headers) async {
-    Response response = await _doPost(url, body, query, headers);
+  Future<Map<String, dynamic>> post(String url,
+      {Map<String, dynamic>? query,
+      dynamic body,
+      Map<String, dynamic>? headers}) async {
+    Response response = await _doPost(url, query, body, headers);
     return Japx.decode(jsonDecode(response.data));
   }
 
@@ -50,9 +52,11 @@ class CustomRequestsApi {
         _dio, url, body, query ?? {}, headers ?? {});
   }
 
-  Future<Map<String, dynamic>> put(String url, Map<String, dynamic>? query,
-      dynamic body, Map<String, dynamic>? headers) async {
-    Response response = await _doPut(url, body, query, headers);
+  Future<Map<String, dynamic>> put(String url,
+      {Map<String, dynamic>? query,
+      dynamic body,
+      Map<String, dynamic>? headers}) async {
+    Response response = await _doPut(url, query, body, headers);
     return Japx.decode(jsonDecode(response.data));
   }
 
@@ -65,9 +69,11 @@ class CustomRequestsApi {
         _dio, url, body, query ?? {}, headers ?? {});
   }
 
-  Future<Map<String, dynamic>> patch(String url, Map<String, dynamic>? query,
-      dynamic body, Map<String, dynamic>? headers) async {
-    Response response = await _doPatch(url, body, query, headers);
+  Future<Map<String, dynamic>> patch(String url,
+      {Map<String, dynamic>? query,
+      dynamic body,
+      Map<String, dynamic>? headers}) async {
+    Response response = await _doPatch(url, query, body, headers);
     return Japx.decode(jsonDecode(response.data));
   }
 
@@ -79,8 +85,8 @@ class CustomRequestsApi {
     return _customRequestService.delete(_dio, url, query ?? {}, headers ?? {});
   }
 
-  Future<Map<String, dynamic>> delete(String url, Map<String, dynamic>? query,
-      Map<String, dynamic>? headers) async {
+  Future<Map<String, dynamic>> delete(String url,
+      {Map<String, dynamic>? query, Map<String, dynamic>? headers}) async {
     Response response = await _doDelete(url, query, headers);
     return Japx.decode(jsonDecode(response.data));
   }
