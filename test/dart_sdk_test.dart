@@ -1,12 +1,14 @@
+import 'package:dart_sdk/api/custom/custom_requests_api.dart';
+import 'package:dart_sdk/api/custom/custom_requests_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dart_sdk/dart_sdk.dart';
-
 void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
+  test('adds one to input values', () async {
+    CustomRequestsApi customRequestsApi =
+        CustomRequestsApi(CustomRequestService(), Dio());
+    var response = await customRequestsApi.get(
+        "http://api.rdemo.tokend.io/integrations/history", {}, null);
+    print(response["data"]);
   });
 }
