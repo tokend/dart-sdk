@@ -1,6 +1,4 @@
-/*
 import 'package:dart_sdk/api/base/model/forbidden_exception.dart';
-import 'package:dart_sdk/api/base/model/server_error.dart';
 
 class InvalidOpException implements Exception {
   final String message;
@@ -12,13 +10,12 @@ class InvalidOpException implements Exception {
 
 class NeedTfaException extends ForbiddenException {
   final int factorId;
-  final TfaFactor.Type factorType;
+  final String factorType;
   final String token;
   final String keychainData;
   final String salt;
   final String walletId;
   final String messengerBotUrl;
-
 
   NeedTfaException(this.factorId, this.factorType, this.token,
       this.keychainData, this.salt, this.walletId, this.messengerBotUrl)
@@ -32,7 +29,7 @@ class NeedTfaException extends ForbiddenException {
   static const String WALLET_ID = "wallet_id";
   static const String MESSENGER_BOT_URL = "bot_url";
 
-  static NeedTfaException fromError(ServerError error){
+/*static NeedTfaException fromError(ServerError error){ //TODO: need to implement fromError method
     if(error.detail.contains("factor") == true){
       var meta = error.meta;
       return NeedTfaException(
@@ -44,6 +41,5 @@ class NeedTfaException extends ForbiddenException {
           meta?[WALLET_ID].toString(),
           meta?[MESSENGER_BOT_URL].toString());
     }
-  }
+  }*/
 }
-*/

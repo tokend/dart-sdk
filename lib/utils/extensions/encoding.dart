@@ -7,4 +7,8 @@ extension EncodingString on String {
   }
 }
 
-extension EncodingUint8List on Uint8List {}
+extension EncodingUint8List on Uint8List {
+  String encodeBase64String() {
+    return base64Encode(this);
+  }
+}
