@@ -1,11 +1,9 @@
-import 'package:dart_sdk/api/custom/custom_requests_api.dart';
-import 'package:dart_sdk/api/custom/custom_requests_service.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:japx/japx.dart';
 
 class Tmp {
   String field1;
-  int? field2;
+  String field2;
 
   Tmp(this.field1, this.field2);
 
@@ -17,14 +15,16 @@ class Tmp {
 
 void main() {
   test('adds one to input values', () async {
-    var tmp = Tmp("test", 1);
-    CustomRequestsApi customRequestsApi = CustomRequestsApi(
+    var tmp = Tmp("test", '1');
+    print(Japx.encode(tmp.toJson()));
+
+    /*CustomRequestsApi customRequestsApi = CustomRequestsApi(
         CustomRequestService(),
         Dio()..interceptors.add(LogInterceptor(requestBody: true)));
     var response = await customRequestsApi.patch(
         "http://api.rdemo.tokend.io/integrations/history",
         query: null,
         body: tmp.toJson());
-    print(response["data"]);
+    print(response["data"]);*/
   });
 }

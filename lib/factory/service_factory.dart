@@ -2,6 +2,7 @@ import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
+import 'package:dart_sdk/tfa/tfa_verification_service.dart';
 import 'package:dio/dio.dart';
 
 class ServiceFactory {
@@ -14,6 +15,13 @@ class ServiceFactory {
   static const _HEADER_ACCEPT_NAME = "Accept";
   static const _HEADER_CONTENT_TYPE_NAME = "Content-Type";
   static const _CONTENT_TYPE = "application/vnd.api+json";
+
+  TfaVerificationService getTfaVerificationService() {
+    var options =
+        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
+    Dio _dio = Dio(options);
+    return TfaVerificationService(_dio);
+  }
 
   CustomRequestsApi getCustomService(
       RequestSigner? requestSigner, TfaCallback? tfaCallback) {
