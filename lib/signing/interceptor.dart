@@ -1,6 +1,8 @@
 import 'dart:io';
 
-abstract class CustomInterceptor {
+import 'package:dio/dio.dart';
+
+abstract class CustomInterceptor extends Interceptor {
   HttpResponse intercept(Chain chain);
 }
 

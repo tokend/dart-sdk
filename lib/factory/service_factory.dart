@@ -1,6 +1,7 @@
 import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
+import 'package:dart_sdk/signing/sign_interceptor.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
 import 'package:dio/dio.dart';
 
@@ -20,6 +21,17 @@ class ServiceFactory {
     var options =
         BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
     Dio _dio = Dio(options);
+    return new CustomRequestsApi(CustomRequestService(), _dio);
+  }
+
+  CustomRequestsApi getService({RequestSigner? requestSigner}) {
+    var options =
+        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
+    Dio _dio = Dio(options);
+
+    if (requestSigner != null) {
+      _dio.interceptors.add(SignInterceptor(_url, requestSigner));
+    }
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }
 
