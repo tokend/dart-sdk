@@ -260,6 +260,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.3"
   http_multi_server:
     dependency: transitive
     description:
@@ -499,7 +506,7 @@ packages:
     source: hosted
     version: "1.0.0"
   tuple:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: tuple
       url: "https://pub.dartlang.org"
@@ -519,6 +526,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  varargs:
+    dependency: "direct main"
+    description:
+      name: varargs
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0+1"
   vector_math:
     dependency: transitive
     description:

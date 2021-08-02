@@ -18,6 +18,9 @@ dependencies:
   japx: ^2.0.3
   json_annotation: ^4.0.1
   json_serializable: ^4.0.3
+  tuple: ^2.0.0
+  varargs: ^0.1.0+1
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:
