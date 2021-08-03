@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:dart_sdk/api/wallets/model/exceptions.dart';
+import 'package:dart_sdk/keyserver/models/login_params.dart';
 import 'package:dio/dio.dart';
+import 'package:japx/japx.dart';
 
 class WalletsApi {
   final Dio _dio;
@@ -31,12 +35,11 @@ class WalletsApi {
 
   /// Will return current default derivation parameters or parameters used to derive specific wallet.
   /// @see <a href="https://tokend.gitlab.io/docs/?http#get-kdf-params">Docs</a>
-  Future<Response> getLoginParams(String? email, bool isRecovery) {
+  Future<LoginParams> getLoginParams(String? email, bool isRecovery) async {
     try {
-      return _dio.get("wallets/kdf", queryParameters: {
-        "email": email,
-        "is_recovery": isRecovery
-      }); //todo: create LoginParams model class
+      var response = await _dio.get("wallets/kdf",
+          queryParameters: {"email": email, "is_recovery": isRecovery});
+      return LoginParams.fromJson(Japx.decode(jsonDecode(response.data)));
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         throw InvalidCredentialsException("Email");
