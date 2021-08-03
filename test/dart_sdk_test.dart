@@ -15,9 +15,10 @@ class Tmp {
 
 void main() {
   test('adds one to input values', () async {
-    var tmp = Tmp("test", '1');
-    print(Japx.encode(tmp.toJson()));
+   /* var tmp = Tmp("test", '1');
+    print(Japx.encode(tmp.toJson()));*/
 
+    print(null.toString());
     /*CustomRequestsApi customRequestsApi = CustomRequestsApi(
         CustomRequestService(),
         Dio()..interceptors.add(LogInterceptor(requestBody: true)));

@@ -1,19 +1,25 @@
 import 'package:dart_sdk/api/tfa/model/verify_tfa_request_body.dart';
 import 'package:dart_sdk/tfa/callbacks.dart';
+import 'package:dart_sdk/tfa/exceptions.dart';
 import 'package:dart_sdk/tfa/tfa_verification_service.dart';
 import 'package:japx/japx.dart';
 
 /// Performs OTP verification.
 class TfaVerifier {
-  final TfaVerificationService service;
-  final String _walletId;
-  final int _factorId;
-  final String _token;
+  late final TfaVerificationService service;
+  late final String _walletId;
+  late final int _factorId;
+  late final String _token;
 
   late InterfaceImpl verifierInterface;
 
-  TfaVerifier(this.service, this._walletId, this._factorId, this._token) {
+  TfaVerifier.get(this.service, this._walletId, this._factorId, this._token) {
     this.verifierInterface = InterfaceImpl(this);
+  }
+
+  TfaVerifier(TfaVerificationService service, NeedTfaException tfaException) {
+    TfaVerifier.get(service, tfaException.walletId, tfaException.factorId,
+        tfaException.token);
   }
 
   EmptyCallback? onVerifiedCallback;
