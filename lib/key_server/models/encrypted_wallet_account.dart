@@ -18,10 +18,11 @@ class EncryptedWalletAccount {
   EncryptedWalletAccount(
       this.accountId, this.email, this.encodedSalt, this.encodedKeychainData);
 
-  EncryptedWalletAccount.get(String accountId, String email, String encodedSalt,
-      KeychainData encodedKeychainData) {
+  EncryptedWalletAccount.get(String accountId, String email,
+      Uint8List encodedSalt, KeychainData encodedKeychainData) {
     this.accountId = accountId;
     this.email = email;
+    this.encodedSalt = encodedSalt.encodeBase64String();
     this.encodedSalt = encodedKeychainData.encode();
   }
 
