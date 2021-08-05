@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:dart_crypto_kit/crypto_cipher/aes256gcm.dart';
 import 'package:dart_sdk/key_server/models/encrypted_wallet_account.dart';
 import 'package:dart_sdk/key_server/models/keychain_data.dart';
+import 'package:dart_sdk/utils/extensions/random.dart';
 import 'package:dart_wallet/account.dart';
 import 'package:dart_wallet/extensions/erase_extensions.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
-import 'package:secure_random/secure_random.dart';
 
 class WalletEncryption {
   static const IV_LENGTH = 12;
@@ -22,7 +22,7 @@ class WalletEncryption {
   /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// @see [Account.secretSeed]
   /// @see [Aes256GCM]
-  KeychainData encryptSecretSeeds(
+  static KeychainData encryptSecretSeeds(
       List<String> seeds, Uint8List iv, Uint8List walletEncryptionKey) {
     var primarySeed = seeds.first;
     var jsonStart = '""{"seed":"""';
@@ -60,13 +60,13 @@ class WalletEncryption {
   /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// @see [Account.secretSeed]
   /// @see [Aes256GCM]
-  KeychainData encryptSecretSeed(
+  static KeychainData encryptSecretSeed(
       String seed, Uint8List iv, Uint8List walletEncryptionKey) {
     return encryptSecretSeeds(List.of([seed]), iv, walletEncryptionKey);
   }
 
   /*List<String> */
-  decryptSecretSeeds(KeychainData keychainData, Uint8List walletEncryptionKey) {
+  static decryptSecretSeeds(KeychainData keychainData, Uint8List walletEncryptionKey) {
     var iv = keychainData.iv;
     var cipherText = keychainData.cipherText;
 
@@ -74,6 +74,10 @@ class WalletEncryption {
     var seedJsonCharBuffer = utf8.decode(seedJsonBytes);
 
     //TODO add array and single parsers
+  }
+
+  /*String */static decryptSecretSeed(KeychainData keychainData, Uint8List walletEncryptionKey){
+    return decryptSecretSeeds(keychainData, walletEncryptionKey);
   }
 
   /// Encrypts given account
@@ -85,7 +89,7 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  EncryptedWalletAccount encryptAccount(String email, Account account,
+  static EncryptedWalletAccount encryptAccount(String email, Account account,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
     return encryptAccounts(email, List.of([account]), walletEncryptionKey, keyDerivationSalt);
   }
@@ -99,11 +103,9 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  encryptAccounts(String email, List<Account> accounts,
+  static encryptAccounts(String email, List<Account> accounts,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
-    var sourceRandom = SecureRandom();
-    String s = sourceRandom.nextString(length: IV_LENGTH);
-    var iv = Uint8List.fromList(s.codeUnits);
+    var iv = getSecureRandomSeed(IV_LENGTH);
 
     var seeds = accounts.map((account) {
       if (account.secretSeed == null) {

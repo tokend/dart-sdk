@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:dart_sdk/utils/extensions/encoding.dart/';
-import 'package:dart_wallet/xdr/utils/dependencies.dart';
+import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 class KeychainData {
   final String encodedIv;

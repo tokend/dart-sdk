@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dart_sdk/key_server/models/keychain_data.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
-import 'package:dart_sdk/utils/extensions/encoding.dart/';
+import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 /// Holds encrypted wallet account data
 class EncryptedWalletAccount {

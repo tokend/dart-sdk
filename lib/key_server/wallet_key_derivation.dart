@@ -4,8 +4,8 @@ import 'package:dart_crypto_kit/crypto_kdf/scrypt_with_master_key_derivation.dar
 import 'package:dart_sdk/key_server/models/login_params.dart';
 import 'package:dart_sdk/utils/extensions/converting.dart';
 import 'package:dart_sdk/utils/extensions/encoding.dart';
+import 'package:dart_sdk/utils/extensions/random.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
-import 'package:secure_random/secure_random.dart';
 
 class WalletKeyDerivation {
   static const WALLET_ID_MASTER_KEY = "WALLET_ID";
@@ -63,9 +63,6 @@ class WalletKeyDerivation {
 
   /// Generate salt for system KDF params.
   Uint8List generateKdfSalt({int lengthBytes = KDF_SALT_LENGTH_BYTES}) {
-    var sourceRandom = SecureRandom();
-    String s = sourceRandom.nextString(length: lengthBytes);
-    var source = Uint8List.fromList(s.codeUnits);
-    return source;
+    return getSecureRandomSeed(lengthBytes);
   }
 }
