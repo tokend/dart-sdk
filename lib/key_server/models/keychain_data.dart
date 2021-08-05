@@ -18,14 +18,13 @@ class KeychainData {
   KeychainData(this.encodedIv, this.encodedCipherText,
       {this.cipherName = "aes", this.cipherMode = "gcm"});
 
-  KeychainData.fromJson(Map<String, dynamic> json)
+  KeychainData.getFromJson(Map<String, dynamic> json)
       : encodedIv = json['IV'],
         encodedCipherText = json['cipherText'],
         cipherName = json['cipherName'],
         cipherMode = json['modeName'];
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'IV': encodedIv,
         'cipherText': encodedCipherText,
         'cipherName': cipherName,
@@ -33,13 +32,17 @@ class KeychainData {
       };
 
   String encode() {
-    return Uint8List.fromList(json
-        .encode(toJson())
-        .codeUnits).encodeBase64String();
+    return Uint8List.fromList(json.encode(toJson()).codeUnits)
+        .encodeBase64String();
   }
 
-  KeychainData fromJson(String rawJson) {
-    return KeychainData.fromJson(json.decode(rawJson) as Map<String, dynamic>);
+  static KeychainData fromJson(String rawJson) {
+    return KeychainData.getFromJson(
+        json.decode(rawJson) as Map<String, dynamic>);
   }
 
+  static KeychainData fromRaw(Uint8List iv, Uint8List cipherText) {
+    return KeychainData(
+        iv.encodeBase64String(), cipherText.encodeBase64String());
+  }
 }

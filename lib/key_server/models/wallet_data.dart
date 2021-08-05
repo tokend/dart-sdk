@@ -76,6 +76,6 @@ class WalletDataAttributes {
         isVerified = json['verified'],
         verificationCode = json['verification_code'];
 
-  KeychainData get keychainData => KeychainData.fromJson(
+  KeychainData get keychainData => KeychainData.getFromJson(
       json.decode(String.fromCharCodes(encodedKeychainData.decodeBase64())));
 }

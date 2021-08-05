@@ -21,6 +21,7 @@ dependencies:
   tuple: ^2.0.0
   varargs: ^0.1.0+1
   http: ^0.13.3
+  hex: ^0.2.0
 
 dev_dependencies:
   flutter_test:

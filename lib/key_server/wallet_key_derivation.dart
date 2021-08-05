@@ -1,6 +1,10 @@
-import 'package:dart_sdk/key_server/models/login_params.dart';
-import 'package:dart_wallet/xdr/utils/dependencies.dart';
+import 'dart:convert';
+
 import 'package:dart_crypto_kit/crypto_kdf/scrypt_with_master_key_derivation.dart';
+import 'package:dart_sdk/key_server/models/login_params.dart';
+import 'package:dart_sdk/utils/extensions/converting.dart';
+import 'package:dart_sdk/utils/extensions/encoding.dart';
+import 'package:dart_wallet/xdr/utils/dependencies.dart';
 import 'package:secure_random/secure_random.dart';
 
 class WalletKeyDerivation {
@@ -8,10 +12,32 @@ class WalletKeyDerivation {
   static const WALLET_KEY_MASTER_KEY = "WALLET_KEY";
   static const KDF_SALT_LENGTH_BYTES = 16;
 
- /* Uint8List deriveWalletEncryptionKey(
+  Uint8List deriveWalletEncryptionKey(
       String login, String password, KdfAttributes kdfAttributes) {
-    var passwordBuffer = StringBuffer(password);
-  }*/
+    var passwordBytes = utf8.encode(password);
+
+    var result = deriveKey(login.toUInt8List(), password.toUInt8List(),
+        WALLET_KEY_MASTER_KEY.toUInt8List(), kdfAttributes);
+
+    passwordBytes.fillRange(0, passwordBytes.length, 0);
+    return result;
+  }
+
+  Uint8List deriveWalletInfo(
+      String login, String password, KdfAttributes kdfAttributes,
+      {bool isId = true}) {
+    var passwordBytes = utf8.encode(password);
+
+    var masterKey = WALLET_KEY_MASTER_KEY.toUInt8List();
+    if (isId) {
+      masterKey = WALLET_ID_MASTER_KEY.toUInt8List();
+    }
+    var result = deriveKey(
+        login.toUInt8List(), password.toUInt8List(), masterKey, kdfAttributes);
+
+    passwordBytes.fillRange(0, passwordBytes.length, 0);
+    return result;
+  }
 
   /// Derives wallet key for given params
   /// See [ScryptWithMasterKeyDerivation]
@@ -27,12 +53,19 @@ class WalletKeyDerivation {
     return derivation.derive(password, salt, kdfAttributes.bytes);
   }
 
-  /*Uint8List deriveWalletId(
+  /// Derives wallet ID for given params and encodes it into HEX
+  ///
+  /// See [deriveKey]
+  String deriveAndEncodeWalletId(
       String login, String password, KdfAttributes kdfAttributes) {
+    return deriveWalletInfo(login, password, kdfAttributes).encodeHexString();
+  }
 
-  }*/
-
-/* Uint8List generateKdfSalt({int lengthBytes = KDF_SALT_LENGTH_BYTES}) {
-    return SecureRandom()//TODO ask Oleg Nachalnik
-  }*/
+  /// Generate salt for system KDF params.
+  Uint8List generateKdfSalt({int lengthBytes = KDF_SALT_LENGTH_BYTES}) {
+    var sourceRandom = SecureRandom();
+    String s = sourceRandom.nextString(length: lengthBytes);
+    var source = Uint8List.fromList(s.codeUnits);
+    return source;
+  }
 }
