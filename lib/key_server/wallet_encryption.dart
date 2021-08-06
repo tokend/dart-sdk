@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dart_crypto_kit/crypto_cipher/aes256gcm.dart';
 import 'package:dart_sdk/key_server/models/encrypted_wallet_account.dart';
 import 'package:dart_sdk/key_server/models/keychain_data.dart';
+import 'package:dart_sdk/key_server/seedreader/keychain_data_seeds_array_reader.dart';
+import 'package:dart_sdk/key_server/seedreader/keychain_data_single_seed_reader.dart';
 import 'package:dart_wallet/account.dart';
 import 'package:dart_wallet/extensions/erase_extensions.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
@@ -66,14 +68,24 @@ class WalletEncryption {
   }
 
   /*List<String> */
-  decryptSecretSeeds(KeychainData keychainData, Uint8List walletEncryptionKey) {
+  String decryptSecretSeeds(
+      KeychainData keychainData, Uint8List walletEncryptionKey) {
     var iv = keychainData.iv;
     var cipherText = keychainData.cipherText;
 
     var seedJsonBytes = Aes256GCM(iv).decrypt(cipherText, walletEncryptionKey);
     var seedJsonCharBuffer = utf8.decode(seedJsonBytes);
 
-    //TODO add array and single parsers
+    var arrayParser = KeychainDataSeedsArrayReader()..run(seedJsonCharBuffer);
+    var singleParser = KeychainDataSingleSeedReader()..run(seedJsonCharBuffer);
+
+    if (arrayParser.reedSeeds.isNotEmpty)
+      return arrayParser.reedSeeds;
+    else if (singleParser.reedSeed != null) {
+      return singleParser.reedSeed!;
+    } else {
+      throw Exception("Unable to parse seed");
+    }
   }
 
   /// Encrypts given account
@@ -87,7 +99,8 @@ class WalletEncryption {
   /// See [Aes256GCM]
   EncryptedWalletAccount encryptAccount(String email, Account account,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
-    return encryptAccounts(email, List.of([account]), walletEncryptionKey, keyDerivationSalt);
+    return encryptAccounts(
+        email, List.of([account]), walletEncryptionKey, keyDerivationSalt);
   }
 
   /// Encrypts given account assuming that first account is the root one
