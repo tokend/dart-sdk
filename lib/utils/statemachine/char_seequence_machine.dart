@@ -1,10 +1,8 @@
 import 'package:dart_sdk/utils/statemachine/char_state.dart';
 
 abstract class CharSequenceStateMachine {
-  Set<CharState> states;
-  String startState;
-
-  CharSequenceStateMachine(this.states, this.startState);
+  abstract Set<CharState> states;
+  abstract String startState;
 
   bool run(String input) {
     var statesMap = Map() as Map<String, CharState>;
