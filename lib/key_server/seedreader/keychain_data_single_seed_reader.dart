@@ -40,4 +40,14 @@ class KeychainDataSingleSeedReader extends KeychainDataSeedReader {
           CharState.finall("end")
         }))
       .toSet();
+
+  @override
+  set startState(String _startState) {
+    startState = _startState;
+  }
+
+  @override
+  set states(Set<CharState> _states) {
+    states = _states;
+  }
 }

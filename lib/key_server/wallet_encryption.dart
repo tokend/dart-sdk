@@ -67,8 +67,7 @@ class WalletEncryption {
     return encryptSecretSeeds(List.of([seed]), iv, walletEncryptionKey);
   }
 
-  /*List<String> */
-  String decryptSecretSeeds(
+  List<String> decryptSecretSeeds(
       KeychainData keychainData, Uint8List walletEncryptionKey) {
     var iv = keychainData.iv;
     var cipherText = keychainData.cipherText;
@@ -82,7 +81,7 @@ class WalletEncryption {
     if (arrayParser.reedSeeds.isNotEmpty)
       return arrayParser.reedSeeds;
     else if (singleParser.reedSeed != null) {
-      return singleParser.reedSeed!;
+      return List.of([singleParser.reedSeed!]);
     } else {
       throw Exception("Unable to parse seed");
     }

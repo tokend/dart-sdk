@@ -4,9 +4,6 @@ import 'package:dart_sdk/utils/statemachine/char_transition.dart';
 import 'package:tuple/tuple.dart';
 
 abstract class KeychainDataSeedReader extends CharSequenceStateMachine {
-  /*KeychainDataSeedReader(Set<CharState> states, String startState)
-      : super(states, startState);*/
-
   static const SEED_BUFFER_SIZE = 400;
   static var startToSeeStates = [
     CharState.withTransitions(

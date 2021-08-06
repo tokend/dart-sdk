@@ -4,10 +4,7 @@ import 'package:dart_sdk/utils/statemachine/char_transition.dart';
 import 'package:tuple/tuple.dart';
 
 class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
-  /*KeychainDataSeedsArrayReader(Set<CharState> states, String startState)
-      : super(states, startState);*/
-
-  var reedSeeds = "";
+  var reedSeeds = <String>[];
 
   @override
   Set<CharState> get states => (KeychainDataSeedReader.startToSeeStates
@@ -44,7 +41,7 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
                 }),
                 CharTransition.get(Tuple2('"', "seeds_array_item_end"), (char) {
                   currentSeed.forEach((element) {
-                    reedSeeds += element;
+                    reedSeeds.add(element);
                   });
                   clearCurrentSeed();
                 })
@@ -60,4 +57,14 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
           CharState.finall("end")
         }))
       .toSet();
+
+  @override
+  set startState(String _startState) {
+    startState = _startState;
+  }
+
+  @override
+  set states(Set<CharState> _states) {
+    states = _states;
+  }
 }
