@@ -1,27 +1,37 @@
-import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:dart_sdk/utils/extensions/encoding.dart/';
+import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 class LoginParams {
   String type;
-  Int64 id;
-  KdfAttributes kdfAttributes;
-
-  LoginParams(this.type, this.id, this.kdfAttributes);
+  int id;
+  //KdfAttributes kdfAttributes;
+  String algorithm;
+  int bits;
+  int n;
+  int p;
+  int r;
+  String? encodedSalt;
+  LoginParams(this.type, this.id,  this.algorithm, this.bits, this.n, this.p, this.r, this.encodedSalt);
 
   LoginParams.fromJson(Map<String, dynamic> json)
-      : type = json['type'],
-        id = json['id'],
-        kdfAttributes = json['attributes'];
+      : type = json['data']['type'], //TODO simplify json parsing
+        id = int.parse(json['data']['id']),
+        algorithm = json['data']['algorithm'],
+        bits = json['data']['bits'],
+        n = json['data']['n'],
+        p = json['data']['p'],
+        r = json['data']['r'],
+        encodedSalt = json['data']['salt'];
+        //kdfAttributes = json['data']['attributes'];
 }
 
 class KdfAttributes {
-  late String algorithm;
-  late int bits;
-  late int n;
-  late int p;
-  late int r;
-  late String? encodedSalt;
+  String algorithm;
+  int bits;
+  int n;
+  int p;
+  int r;
+  String? encodedSalt;
 
   KdfAttributes(
       this.algorithm, this.bits, this.n, this.p, this.r, this.encodedSalt);

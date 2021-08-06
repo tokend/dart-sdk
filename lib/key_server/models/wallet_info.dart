@@ -8,12 +8,18 @@ class WalletInfo {
   List<String>? _secretSeeds;
   String? legacySingleSecretSeed;
 
+  WalletInfo(this.accountId, this.email, this.walletIdHex, this.loginParams,
+      this._secretSeeds);
+
   WalletInfo.fromJson(Map<String, dynamic> json)
       : accountId = json['accountId'],
         email = json['email'],
         walletIdHex = json['walletIdHex'],
         loginParams = json['loginParams'],
-        _secretSeeds = json['secretSeeds'];
+        _secretSeeds = json['secretSeeds'],
+        legacySingleSecretSeed = json['secretSeed'] {
+    print('JSON $json');
+  }
 
   List<String> get secretSeeds {
     var legacySeed;
@@ -31,5 +37,33 @@ class WalletInfo {
     _secretSeeds = List.of([value]);
   }
 
-  //TODO equals and hashcode methods
+  @override
+  int get hashCode {
+    var result = accountId.hashCode;
+    result = 31 * result + email.hashCode;
+    result = 31 * result + walletIdHex.hashCode;
+    result = 31 * result + secretSeeds.hashCode;
+    result = 31 * result + loginParams.hashCode;
+    return result;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (!(other is WalletInfo) ||
+        accountId != other.accountId ||
+        email != other.email ||
+        walletIdHex != other.walletIdHex) return false;
+
+    var otherSeeds = other.secretSeeds;
+
+    for (int i = 0; i < secretSeeds.length; i++) {
+      if (secretSeeds[i] != otherSeeds[i]) {
+        return false;
+      }
+    }
+
+    if (loginParams != other.loginParams) return false;
+
+    return true;
+  }
 }

@@ -32,15 +32,16 @@ class ServiceFactory {
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }
 
-  CustomRequestsApi getService({RequestSigner? requestSigner}) {
+   Dio getService({RequestSigner? requestSigner}) {
     var options =
         BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
     Dio _dio = Dio(options);
 
+    _dio.interceptors.add(LogInterceptor(responseBody: true));
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));
     }
-    return new CustomRequestsApi(CustomRequestService(), _dio);
+    return _dio;
   }
 
   Map<String, String?> _getDefaultHeaders(Map<String, String?>? extraHeaders) {

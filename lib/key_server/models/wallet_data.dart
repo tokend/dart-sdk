@@ -5,7 +5,7 @@ import 'package:dart_sdk/api/base/model/data_entity.dart';
 import 'package:dart_sdk/key_server/models/encrypted_wallet_account.dart';
 import 'package:dart_sdk/key_server/models/keychain_data.dart';
 import 'package:dart_sdk/key_server/models/wallet_relation.dart';
-import 'package:dart_sdk/utils/extensions/encoding.dart/';
+import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 class WalletData {
   String type;
@@ -17,10 +17,10 @@ class WalletData {
   static const TYPE_RECOVERY = "recovery-wallet";
 
   WalletData.fromJson(Map<String, dynamic> json)
-      : type = json['type'],
-        id = json['id'],
-        attributes = json['attributes'],
-        relationships = json['relationships'];
+      : type = json['data']['type'],
+        id = json['data']['id'],
+        attributes = WalletDataAttributes.fromJson((json['data']['attributes']));
+        //relationships = (json['data']['relationships']);
 
   WalletData(this.type, this.id, this.attributes);
 

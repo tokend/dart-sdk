@@ -15,14 +15,14 @@ class WalletsApi {
   static const String VERIFICATION_META_TOKEN = "token";
 
   /// Will return specific wallet by given id.
-  /// @see <a href="https://tokend.gitlab.io/docs/?http#get-wallet">Docs</a>
+  /// See <a href="https://tokend.gitlab.io/docs/?http#get-wallet">Docs</a>
   Future<WalletData> getById(String walletId,
       {Map<String, dynamic> queryMap = const {}}) {
     try {
       return _dio
           .get("wallets/$walletId", queryParameters: queryMap)
           .then((response) =>
-          WalletData.fromJson(Japx.decode(jsonDecode(response.data))));
+          WalletData.fromJson(jsonDecode(response.data)));
       } on DioError catch (e)
       {
         switch (e.response?.statusCode) {
@@ -43,6 +43,8 @@ class WalletsApi {
     try {
       var response = await _dio.get("wallets/kdf",
           queryParameters: {"email": email, "is_recovery": isRecovery});
+      print (jsonDecode(response.data));
+      print (Japx.decode(jsonDecode(response.data)));
       return LoginParams.fromJson(Japx.decode(jsonDecode(response.data)));
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
