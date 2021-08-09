@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dart_sdk/utils/statemachine/char_state.dart';
 
 abstract class CharSequenceStateMachine {
@@ -5,7 +7,7 @@ abstract class CharSequenceStateMachine {
   abstract String startState;
 
   bool run(String input) {
-    var statesMap = Map() as Map<String, CharState>;
+    var statesMap = HashMap<String, CharState>();
 
     states.forEach((state) {
       statesMap[state.name] = state;
@@ -15,18 +17,14 @@ abstract class CharSequenceStateMachine {
     var state = startState;
 
     for (int i = 0; i < input.length; i++) {
-      var s = state?.doTransition(input[i]);
-      if (s == null) {
+      var key = state?.doTransition(input[i]);
+      state = statesMap[key];
+
+      if (state?.name == null) {
         state = startState;
       }
-      var newState = statesMap[s];
-      if (newState == null) {
-        throw ArgumentError('State $s not found');
-      }
 
-      state = newState;
-
-      if (state.isFinal) {
+      if (state?.isFinal == true) {
         return true;
       }
     }

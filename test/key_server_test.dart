@@ -17,6 +17,6 @@ void main() {
 
     var walletInfo = await keyServer.getWalletInfo(email, password);
 
-    print(walletInfo.walletIdHex);
+    print(walletInfo.secretSeeds.first);
   });
 }

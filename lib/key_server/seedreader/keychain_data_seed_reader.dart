@@ -7,15 +7,15 @@ abstract class KeychainDataSeedReader extends CharSequenceStateMachine {
   static const SEED_BUFFER_SIZE = 400;
   static var startToSeeStates = [
     CharState.withTransitions(
-        "start", List.of([CharTransition.get(Tuple2('"', "'"), (char) {})])),
+        "start", List.of([CharTransition.get(Tuple2('"', "'"), (char) {return false;})])),
     CharState.withTransitions(
-        "'", List.of([CharTransition.get(Tuple2('s', "'s"), (char) {})])),
+        "'", List.of([CharTransition.get(Tuple2('s', "'s"), (char) {return false;})])),
     CharState.withTransitions(
-        "'s", List.of([CharTransition.get(Tuple2('e', "'se"), (char) {})])),
+        "'s", List.of([CharTransition.get(Tuple2('e', "'se"), (char) {return false;})])),
     CharState.withTransitions(
-        "'se", List.of([CharTransition.get(Tuple2('e', "'see"), (char) {})])),
+        "'se", List.of([CharTransition.get(Tuple2('e', "'see"), (char) {return false;})])),
     CharState.withTransitions(
-        "'see", List.of([CharTransition.get(Tuple2('d', "'seed"), (char) {})])),
+        "'see", List.of([CharTransition.get(Tuple2('d', "'seed"), (char) {return false;})])),
   ];
 
   @override
@@ -23,14 +23,12 @@ abstract class KeychainDataSeedReader extends CharSequenceStateMachine {
 
   @override
   bool run(String input) {
-    var result = super.run(input);
-    throw UnimplementedError();
+    return super.run(input);
   }
 
-  List<String> currentSeed = <String>[];
+  String currentSeed = "";
 
   clearCurrentSeed() {
-    currentSeed.fillRange(0, currentSeed.length, '0');
-    currentSeed.clear();
+    ///TODO find out a way to erase seeds
   }
 }

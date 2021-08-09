@@ -10,9 +10,9 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
   Set<CharState> get states => (KeychainDataSeedReader.startToSeeStates
         ..addAll({
           CharState.withTransitions("'seed",
-              List.of([CharTransition.get(Tuple2("s", "seeds"), (char) {})])),
+              List.of([CharTransition.get(Tuple2("s", "'seeds"), (char) {})])),
           CharState.withTransitions("'seeds",
-              List.of([CharTransition.get(Tuple2('"', "seeds"), (char) {})])),
+              List.of([CharTransition.get(Tuple2('"', "'seeds'"), (char) {})])),
           CharState.withTransitions(
               "'seeds'",
               List.of([
@@ -23,26 +23,24 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
           CharState.withTransitions(
               "seeds_array_start",
               List.of([
-                CharTransition.basic(
-                    ((value) => value != '"'), "seeds_array_start'", (char) {}),
+                CharTransition.basic(((value) {
+                  return value != '"';
+                }), "seeds_array_start'", (char) {}),
                 CharTransition.get(Tuple2('"', "seed_char"), (char) {})
               ])),
           CharState.withTransitions(
               "seed_char",
               List.of([
-                CharTransition.basic(((value) => value != '"'), "seed_char'",
+                CharTransition.basic(
+                    ((value) {
+                      return value != '"';
+                    }),
+                    "seed_char",
                     (char) {
-                  currentSeed.add(char);
-                  // Prevent array copy on ensuring capacity
-                  if (currentSeed.length >=
-                      KeychainDataSeedReader.SEED_BUFFER_SIZE / 4) {
-                    clearCurrentSeed();
-                  }
-                }),
+                      currentSeed += char;
+                    }),
                 CharTransition.get(Tuple2('"', "seeds_array_item_end"), (char) {
-                  currentSeed.forEach((element) {
-                    reedSeeds.add(element);
-                  });
+                  reedSeeds.add(currentSeed);
                   clearCurrentSeed();
                 })
               ])),
@@ -52,7 +50,7 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
                 CharTransition.basic(((value) => value != '"' && value != "]"),
                     "seeds_array_item_end'", (char) {}),
                 CharTransition.get(Tuple2(']', "end"), (char) {}),
-                CharTransition.get(Tuple2('"', "end_char"), (char) {})
+                CharTransition.get(Tuple2('"', "seed_char"), (char) {})
               ])),
           CharState.finall("end")
         }))

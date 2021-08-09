@@ -25,7 +25,7 @@ class WalletEncryption {
   /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// @see [Account.secretSeed]
   /// @see [Aes256GCM]
-  KeychainData encryptSecretSeeds(
+  static KeychainData encryptSecretSeeds(
       List<String> seeds, Uint8List iv, Uint8List walletEncryptionKey) {
     var primarySeed = seeds.first;
     var jsonStart = '""{"seed":"""';
@@ -63,12 +63,12 @@ class WalletEncryption {
   /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// @see [Account.secretSeed]
   /// @see [Aes256GCM]
-  KeychainData encryptSecretSeed(
+  static KeychainData encryptSecretSeed(
       String seed, Uint8List iv, Uint8List walletEncryptionKey) {
     return encryptSecretSeeds(List.of([seed]), iv, walletEncryptionKey);
   }
 
-  List<String> decryptSecretSeeds(
+  static List<String> decryptSecretSeeds(
       KeychainData keychainData, Uint8List walletEncryptionKey) {
     var iv = keychainData.iv;
     var cipherText = keychainData.cipherText;

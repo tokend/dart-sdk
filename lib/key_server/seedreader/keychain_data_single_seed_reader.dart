@@ -23,17 +23,10 @@ class KeychainDataSingleSeedReader extends KeychainDataSeedReader {
               List.of([
                 CharTransition.basic(((value) => value != '"'), "seed_char'",
                     (char) {
-                  currentSeed.add(char);
-                  // Prevent array copy on ensuring capacity
-                  if (currentSeed.length >=
-                      KeychainDataSeedReader.SEED_BUFFER_SIZE / 4) {
-                    clearCurrentSeed();
-                  }
+                  currentSeed += char;
                 }),
                 CharTransition.get(Tuple2('"', "end"), (char) {
-                  currentSeed.forEach((element) {
-                    reedSeed = reedSeed ?? "" + element;
-                  });
+                  reedSeed = reedSeed ?? currentSeed;
                   clearCurrentSeed();
                 })
               ])),

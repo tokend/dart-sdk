@@ -45,7 +45,6 @@ class KeyServer {
         List.of([password]),
       );
     } else {
-      print ('2');
       return WalletInfo(
         accountId,
         email,

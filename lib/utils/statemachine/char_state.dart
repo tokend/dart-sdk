@@ -24,12 +24,14 @@ abstract class CharState {
   static CharState withTransitions(
       String name, List<CharTransition> transitions) {
     return _AnonymousCharState(name, transitions.isEmpty, doTransition: (char) {
-      var transition = transitions.firstWhere((element) {
-        return element.predicate(char);
+      CharTransition? transition;
+      transitions.forEach((tr) {
+        if (tr.predicate(char)) {
+          transition = tr;
+          transition!.callback.call(char);
+        }
       });
-
-      transition.callback(char);
-      return transition.newState;
+      return (transition)?.newState;
     });
   }
 
