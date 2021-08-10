@@ -9,7 +9,7 @@ class TokenDApi extends BaseApi {
   Map<String, String?>? extraHeaders;
   bool withLogs;
 
-  TokenDApi(this.rootUrl, this.requestSigner, this.tfaCallback,
-      this.extraHeaders, this.withLogs)
+  TokenDApi(this.rootUrl, {this.requestSigner, this.tfaCallback,
+    this.extraHeaders, this.withLogs = true})
       : super(rootUrl, requestSigner, tfaCallback, extraHeaders, withLogs);
 }

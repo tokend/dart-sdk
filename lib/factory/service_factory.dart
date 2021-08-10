@@ -37,6 +37,9 @@ class ServiceFactory {
         BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
     Dio _dio = Dio(options);
 
+    if (_withLogs) {
+      _dio.interceptors.add(LogInterceptor(responseBody: true));
+    }
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));
     }

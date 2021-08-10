@@ -18,7 +18,7 @@ class AccountRequestSigner implements RequestSigner {
   @override
   String accountId;
 
-  AccountRequestSigner(this._account, this.accountId) {
+  AccountRequestSigner(this._account, {this.accountId = ""}) {
     accountId = _account.accountId;
   }
 
