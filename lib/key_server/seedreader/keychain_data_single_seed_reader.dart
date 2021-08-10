@@ -10,7 +10,7 @@ class KeychainDataSingleSeedReader extends KeychainDataSeedReader {
   Set<CharState> get states => (KeychainDataSeedReader.startToSeeStates
         ..addAll({
           CharState.withTransitions("'seed",
-              List.of([CharTransition.get(Tuple2('"', "'seed"), (char) {})])),
+              List.of([CharTransition.get(Tuple2('"', "'seed'"), (char) {})])),
           CharState.withTransitions(
               "'seed'",
               List.of([
@@ -21,7 +21,7 @@ class KeychainDataSingleSeedReader extends KeychainDataSeedReader {
           CharState.withTransitions(
               "seed_char",
               List.of([
-                CharTransition.basic(((value) => value != '"'), "seed_char'",
+                CharTransition.basic(((value) => value != '"'), "seed_char",
                     (char) {
                   currentSeed += char;
                 }),

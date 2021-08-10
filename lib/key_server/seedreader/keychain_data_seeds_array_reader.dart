@@ -25,7 +25,7 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
               List.of([
                 CharTransition.basic(((value) {
                   return value != '"';
-                }), "seeds_array_start'", (char) {}),
+                }), "seeds_array_start", (char) {}),
                 CharTransition.get(Tuple2('"', "seed_char"), (char) {})
               ])),
           CharState.withTransitions(
@@ -48,7 +48,7 @@ class KeychainDataSeedsArrayReader extends KeychainDataSeedReader {
               "seeds_array_item_end",
               List.of([
                 CharTransition.basic(((value) => value != '"' && value != "]"),
-                    "seeds_array_item_end'", (char) {}),
+                    "seeds_array_item_end", (char) {}),
                 CharTransition.get(Tuple2(']', "end"), (char) {}),
                 CharTransition.get(Tuple2('"', "seed_char"), (char) {})
               ])),

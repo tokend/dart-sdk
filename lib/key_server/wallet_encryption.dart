@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dart_crypto_kit/crypto_cipher/aes256gcm.dart';
 import 'package:dart_sdk/key_server/models/encrypted_wallet_account.dart';
 import 'package:dart_sdk/key_server/models/keychain_data.dart';
-import 'package:dart_sdk/utils/extensions/random.dart';
 import 'package:dart_sdk/key_server/seedreader/keychain_data_seeds_array_reader.dart';
 import 'package:dart_sdk/key_server/seedreader/keychain_data_single_seed_reader.dart';
 import 'package:dart_wallet/account.dart';
@@ -22,15 +21,15 @@ class WalletEncryption {
   /// [iv] non-empty cipher initialization vector
   /// [walletEncryptionKey] 32 bytes encryption key
   ///
-  /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
-  /// @see [Account.secretSeed]
-  /// @see [Aes256GCM]
+  /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
+  /// See [Account.secretSeed]
+  /// See [Aes256GCM]
   static KeychainData encryptSecretSeeds(
       List<String> seeds, Uint8List iv, Uint8List walletEncryptionKey) {
     var primarySeed = seeds.first;
-    var jsonStart = '""{"seed":"""';
-    var jsonMiddle = """","seeds":[""";
-    var jsonEnd = """]}""";
+    var jsonStart = '{"seed":"';
+    var jsonMiddle = '","seeds":[';
+    var jsonEnd = ']}';
 
     var seedsBuffer = "";
     for (int i = 0; i < seeds.length; i++) {
@@ -60,9 +59,9 @@ class WalletEncryption {
   /// [iv] non-empty cipher initialization vector
   /// [walletEncryptionKey] 32 bytes encryption key
   ///
-  /// @see [WalletKeyDerivation.deriveWalletEncryptionKey]
-  /// @see [Account.secretSeed]
-  /// @see [Aes256GCM]
+  /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
+  /// See [Account.secretSeed]
+  /// See [Aes256GCM]
   static KeychainData encryptSecretSeed(
       String seed, Uint8List iv, Uint8List walletEncryptionKey) {
     return encryptSecretSeeds(List.of([seed]), iv, walletEncryptionKey);
@@ -86,6 +85,15 @@ class WalletEncryption {
     } else {
       throw Exception("Unable to parse seed");
     }
+  }
+
+  /// Decrypts single secret seed wrapped into JSON object with given key
+  ///
+  /// See WalletKeyDerivation.deriveWalletEncryptionKey
+  /// See encryptSecretSeed
+  static String decryptSecretSeed(
+      KeychainData keychainData, Uint8List walletEncryptionKey) {
+    return decryptSecretSeeds(keychainData, walletEncryptionKey).first;
   }
 
   /// Encrypts given account
