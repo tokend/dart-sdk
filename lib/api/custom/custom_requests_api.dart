@@ -15,15 +15,16 @@ class CustomRequestsApi {
   CustomRequestsApi(this._customRequestService, this._dio);
 
   //region GET
-  Future<Response> _doGet(String url, Map<String, dynamic>? query,
+  Future<Response> doGet(String url, Map<String, dynamic>? query,
       Map<String, dynamic>? headers) async {
     return _customRequestService.get(_dio, url, query ?? {}, headers ?? {});
   }
 
   Future<Map<String, dynamic>> get(String url,
       {Map<String, dynamic>? query, Map<String, dynamic>? headers}) async {
-    Response response = await _doGet(url, query, headers);
-    return Japx.decode(jsonDecode(response.data));
+    Response response = await doGet(url, query, headers);
+    return jsonDecode(response.data);
+    //return Japx.decode(jsonDecode(response.data));
   }
 
 // end region

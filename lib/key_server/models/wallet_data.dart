@@ -11,16 +11,17 @@ class WalletData {
   String type;
   String id;
   WalletDataAttributes attributes;
-  var relationships = Map<String, DataEntity<dynamic>>.fromEntries([]);
+  var relationships = Map<String, dynamic>.fromEntries([]);
 
   static const TYPE_DEFAULT = "wallet";
   static const TYPE_RECOVERY = "recovery-wallet";
 
   WalletData.fromJson(Map<String, dynamic> json)
-      : type = json['data']['type'],
-        id = json['data']['id'],
-        attributes = WalletDataAttributes.fromJson((json['data']['attributes']));
-        //relationships = (json['data']['relationships']);
+      : type = json['type'],
+        id = json['id'],
+        attributes =
+            WalletDataAttributes.fromJson((json['attributes'])),
+        relationships = (json['relationships']);
 
   WalletData(this.type, this.id, this.attributes);
 

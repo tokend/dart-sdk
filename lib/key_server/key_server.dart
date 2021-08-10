@@ -10,25 +10,26 @@ class KeyServer {
 
   KeyServer(this.walletsApi);
 
+  // region Obtain
+  /// Loads user's wallet and decrypts secret seed.
+  /// See buildWalletInfo
   Future<WalletInfo> getWalletInfo(String login, String password,
       {bool isRecovery = false, Map<String, dynamic>? queryMap}) {
     return buildWalletInfo(login, password);
   }
 
+  /// See getLoginParams
+  /// See getWalletData
   Future<WalletInfo> buildWalletInfo(String login, String password,
       {bool isRecovery = false, Map<String, dynamic>? queryMap}) async {
     var loginParams =
-    await getLoginParams(login: login, isRecovery: isRecovery);
+        await getLoginParams(login: login, isRecovery: isRecovery);
     var derivationLogin = login.toLowerCase();
 
-    var kdfAttributes = KdfAttributes(
-        loginParams.algorithm, loginParams.bits, loginParams.n, loginParams.p,
-        loginParams.r, loginParams.encodedSalt);
-
     var hexWalletId = WalletKeyDerivation.deriveAndEncodeWalletId(
-        derivationLogin, password, kdfAttributes);
+        derivationLogin, password, loginParams.kdfAttributes);
     var walletKey = WalletKeyDerivation.deriveWalletEncryptionKey(
-        derivationLogin, password, kdfAttributes);
+        derivationLogin, password, loginParams.kdfAttributes);
 
     var walletData = await getWalletData(hexWalletId, queryMap: queryMap);
 
@@ -55,6 +56,7 @@ class KeyServer {
     }
   }
 
+  /// Loads wallet by wallet ID.
   Future<WalletData> getWalletData(String walletId,
       {Map<String, dynamic>? queryMap}) {
     return walletsApi.getById(walletId, queryMap: queryMap ?? Map());
@@ -65,4 +67,5 @@ class KeyServer {
   Future<LoginParams> getLoginParams({String? login, bool isRecovery = false}) {
     return walletsApi.getLoginParams(login, isRecovery);
   }
+// endregion
 }
