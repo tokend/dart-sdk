@@ -5,7 +5,6 @@ import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_wallet/utils/hashing.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
 import 'package:tuple/tuple.dart';
-import 'package:http/http.dart' as http;
 
 class SignInterceptor extends CustomInterceptor {
   static const REQUEST_TARGET_HEADER = "(request-target)";
@@ -88,10 +87,6 @@ class SignInterceptor extends CustomInterceptor {
     headers.forEach((key, value) {
       chain.request().headers.add(key, value);
     });
-
-    /*  var r = new http.Request(method, url);
-    r.headers.clear();
-    r.headers.addAll(headers);*/
 
     return chain.request();
   }

@@ -1,16 +1,23 @@
-import 'dart:convert';
-
+import 'package:dart_sdk/api/base/model/data_entity.dart';
+import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dio/dio.dart';
 
+import 'model/document_upload_request.dart';
+
 class DocumentsService {
-  Future<Response> requestUpload(Dio dio, dynamic body) {
-    return dio.post('documents', data: jsonEncode(body));
+  CustomRequestsApi customRequestsApi;
+
+  DocumentsService(this.customRequestsApi);
+
+  Future<Map<String, dynamic>> requestUpload(dynamic body) {
+    print('BODY: ${(body as DataEntity<DocumentUploadRequest>).data.toJson()}');
+    return customRequestsApi.post('documents', body: (body.data.toJson()));
   }
 
-  Future<Response> upload(Dio dio, String bucketUrl, FormData formData) {
-    return dio.post(
+  Future<Map<String, dynamic>> upload(String bucketUrl, FormData formData) {
+    return customRequestsApi.post(
       bucketUrl,
-      data: formData,
+      body: formData,
     );
   }
 }

@@ -46,6 +46,20 @@ class ServiceFactory {
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }
 
+/*  DocumentsService getDocumentsService({RequestSigner? requestSigner}) {
+    var options =
+        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
+    Dio _dio = Dio(options);
+
+    if (_withLogs) {
+      _dio.interceptors.add(LogInterceptor(responseBody: true));
+    }
+    if (requestSigner != null) {
+      _dio.interceptors.add(SignInterceptor(_url, requestSigner));
+    }
+    return new DocumentsService(_dio);
+  }*/
+
   Map<String, String?> _getDefaultHeaders(Map<String, String?>? extraHeaders) {
     var defaultMap = {
       _HEADER_CONTENT_TYPE_NAME: _CONTENT_TYPE,

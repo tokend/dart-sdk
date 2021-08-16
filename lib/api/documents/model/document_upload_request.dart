@@ -11,12 +11,22 @@ class DocumentUploadRequest {
     attributes = DocumentUploadRequestAttributes(contentType);
     relationships = DocumentUploadRequestRelationships(ownerAccountId);
   }
+
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'attributes': attributes.toJson(),
+        'relationships': relationships.toJson(),
+      };
 }
 
 class DocumentUploadRequestAttributes {
   String contentType;
 
   DocumentUploadRequestAttributes(this.contentType);
+
+  Map<String, dynamic> toJson() => {
+        'content_type': contentType,
+      };
 }
 
 class DocumentUploadRequestRelationships {
@@ -28,10 +38,14 @@ class DocumentUploadRequestRelationships {
     this.ownerAccountId = ownerAccountId;
     this.owner = DataEntity(Owner(ownerAccountId));
   }
+
+  Map<String, dynamic> toJson() => {'owner': owner.toJson()};
 }
 
 class Owner {
   String id;
 
   Owner(this.id);
+
+  Map<String, dynamic> toJson() => {'id': id};
 }
