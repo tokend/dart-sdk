@@ -16,5 +16,4 @@ class Util {
         requestSigner: AccountRequestSigner(account), tfaCallback: tfaCallback);
   }
 
-
 }

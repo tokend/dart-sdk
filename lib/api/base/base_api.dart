@@ -17,7 +17,8 @@ abstract class BaseApi {
       ServiceFactory(rootUrl, withLogs, extraHeaders);
 
   CustomRequestsApi getService() {
-    return serviceFactory.getCustomService(requestSigner, tfaCallback);
+    return serviceFactory.getService(
+        requestSigner: requestSigner, tfaCallback: tfaCallback);
   }
 
   bool get isSigned {
