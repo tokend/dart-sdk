@@ -1,1 +1,1 @@
-typedef DocumentUploadPolicy = Map<String, String>;
+typedef DocumentUploadPolicy = Map<String, dynamic>;

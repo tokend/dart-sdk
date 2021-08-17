@@ -1,8 +1,7 @@
-import 'package:dart_sdk/api/wallets/wallets_api.dart';
 import 'package:dart_sdk/key_server/key_server.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'util.dart';
+import '../util.dart';
 
 void main() {
   test('sign in', () async {
@@ -11,7 +10,7 @@ void main() {
 
     var api = Util.getApi();
 
-    var keyServer = KeyServer(WalletsApi(api.serviceFactory.getService())); //TODO
+    var keyServer = KeyServer(api.wallets);
 
     print("Attempt to sign up $email $password");
 

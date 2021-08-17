@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:dart_sdk/api/base/model/data_entity.dart';
+import 'package:dart_sdk/api/base/model/remote_file.dart';
 import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/documents/model/document_type.dart';
 import 'package:dart_sdk/api/documents/model/document_upload_request.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
 
 import 'model/document_upload_policy.dart';
 
@@ -18,6 +20,9 @@ class DocumentsApi {
 
   DocumentsApi(this.customRequestsApi);
 
+  /// Will return document upload policy map.
+  /// [contentType] must be an allowed MIME type, see allowed types in Docs.
+  /// See <a href="https://tokend.gitlab.io/docs/?http#upload">Docs</a>
   Future<Map<String, dynamic>> requestUpload(
       String accountId, DocumentType documentType, String contentType) {
     return requestUploadDoc(
@@ -37,17 +42,27 @@ class DocumentsApi {
   /// Uploads given file content according to the policy.
   /// Do not sign this request!
   /// See [requestUpload]
-  upload(DocumentUploadPolicy policy, String contentType, String fileName,
-      Uint8List content) {
-    var file = MultipartFile.fromBytes(content);
-    var filePart = FormData.fromMap({'file': fileName, 'content': file});
-    uploadFileMultipart(policy, filePart);
+  Future<RemoteFile> upload(DocumentUploadPolicy policy, String contentType,
+      String fileName, Uint8List content) {
+    var file = MultipartFile.fromBytes(content,
+        filename: fileName, contentType: MediaType.parse(contentType));
+
+    var formData =
+        new Map<String, dynamic>.from(policy['data'] as Map<String, dynamic>);
+    formData.remove('id');
+    formData.remove('type');
+    formData.remove(POLICY_URL_KEY);
+    formData.addAll({'file': file});
+
+    var filePart = FormData.fromMap(formData);
+    return uploadFileMultipart(policy['data'], filePart).then((_) =>
+        RemoteFile(policy['data'][REMOTE_FILE_KEY], fileName, contentType));
   }
 
-  uploadFileMultipart(DocumentUploadPolicy policy, FormData data) {
+  Future<void> uploadFileMultipart(
+      DocumentUploadPolicy policy, FormData data) async {
     var uploadUrl = policy[POLICY_URL_KEY] ?? "";
-    print('uploadUrl $uploadUrl');
-    _upload(uploadUrl, data);
+    return _upload(uploadUrl, data);
   }
 
   Future<Map<String, dynamic>> _requestUpload(dynamic body) {
@@ -56,10 +71,19 @@ class DocumentsApi {
         body: json.encode(body.toJson()));
   }
 
-  Future<Map<String, dynamic>> _upload(String bucketUrl, FormData formData) {
+  Future<void> _upload(String bucketUrl, FormData formData) {
     return customRequestsApi.post(
       bucketUrl,
       body: formData,
     );
+  }
+
+  /// Will return full, ready to open document URL
+  ///
+  /// See <a href="https://docs.tokend.io/identity/#operation/getDocumentURL">Docs</a>
+  Future<String> getUrl(String documentKey) {
+    return customRequestsApi
+        .get('documents/$documentKey')
+        .then((response) => response['data']['attributes']['url']);
   }
 }

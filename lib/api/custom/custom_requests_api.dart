@@ -41,7 +41,11 @@ class CustomRequestsApi {
       dynamic body,
       Map<String, dynamic>? headers}) async {
     Response response = await _doPost(url, query, body, headers);
-    return Japx.decode(jsonDecode(response.data));
+    Map<String, dynamic> result = {};
+    if (response.data != null && (response.data as String).length > 0) {
+      result = Japx.decode(jsonDecode(response.data));
+    }
+    return result;
   }
 
 //end region

@@ -3,6 +3,7 @@ import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_sdk/signing/sign_interceptor.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
+import 'package:dart_sdk/tfa/tfa_interceptor.dart';
 import 'package:dart_sdk/tfa/tfa_verification_service.dart';
 import 'package:dio/dio.dart';
 
@@ -24,15 +25,8 @@ class ServiceFactory {
     return TfaVerificationService(_dio);
   }
 
-  CustomRequestsApi getCustomService(
-      RequestSigner? requestSigner, TfaCallback? tfaCallback) {
-    var options =
-        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
-    Dio _dio = Dio(options);
-    return new CustomRequestsApi(CustomRequestService(), _dio);
-  }
-
-  CustomRequestsApi getService({RequestSigner? requestSigner}) {
+  CustomRequestsApi getService(
+      {RequestSigner? requestSigner, TfaCallback? tfaCallback}) {
     var options =
         BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
     Dio _dio = Dio(options);
@@ -43,22 +37,12 @@ class ServiceFactory {
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));
     }
+    if (tfaCallback != null) {
+      _dio.interceptors
+          .add(TfaInterceptor(getTfaVerificationService(), tfaCallback));
+    }
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }
-
-/*  DocumentsService getDocumentsService({RequestSigner? requestSigner}) {
-    var options =
-        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
-    Dio _dio = Dio(options);
-
-    if (_withLogs) {
-      _dio.interceptors.add(LogInterceptor(responseBody: true));
-    }
-    if (requestSigner != null) {
-      _dio.interceptors.add(SignInterceptor(_url, requestSigner));
-    }
-    return new DocumentsService(_dio);
-  }*/
 
   Map<String, String?> _getDefaultHeaders(Map<String, String?>? extraHeaders) {
     var defaultMap = {
