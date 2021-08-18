@@ -1,13 +1,11 @@
-import 'dart:io';
 
-import 'package:dart_sdk/signing/interceptor.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_wallet/utils/hashing.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
+import 'package:dio/dio.dart';
 import 'package:tuple/tuple.dart';
-import 'package:http/http.dart' as http;
 
-class SignInterceptor extends CustomInterceptor {
+class SignInterceptor extends Interceptor {
   static const REQUEST_TARGET_HEADER = "(request-target)";
   static const DATE_HEADER = "Date";
   static const AUTH_HEADER = "Authorization";
@@ -20,22 +18,19 @@ class SignInterceptor extends CustomInterceptor {
   SignInterceptor(this._baseUrl, this._requestSigner);
 
   @override
-  HttpResponse intercept(Chain chain) {
-    var newRequest = buildSignedRequest(chain);
-
-    var response = newRequest.response;
-
-    return response;
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    await buildSignedRequest(options);
+    super.onRequest(options, handler);
   }
 
   /// [relativeUrl] relative endpoint url started with '/'
   /// [method] HTTP method name
   ///
   /// Returns map of headers required for the request to be signed
-  static Map<String, String> getSignatureHeaders(
-      RequestSigner signer, String method, String relativeUrl) {
+  static Future<Map<String, String>> getSignatureHeaders(
+      RequestSigner signer, String method, String relativeUrl) async {
     var requestTarget = '${method.toLowerCase()} $relativeUrl';
-    var authHeaderContent = _buildHttpAuthHeader(
+    var authHeaderContent = await _buildHttpAuthHeader(
         signer, List.from([Tuple2(REQUEST_TARGET_HEADER, requestTarget)]));
     return Map.fromEntries(
       [
@@ -61,12 +56,12 @@ class SignInterceptor extends CustomInterceptor {
 
   /// Returns auth header content according to the signing requirements
   /// See <a href="https://tokend.gitbook.io/knowledge-base/technical-details/security#rest-api">Requests signing on Knowledge base</a>
-  static String _buildHttpAuthHeader(RequestSigner requestSigner,
-      List<Tuple2<String, String>> headerContents) {
+  static Future<String> _buildHttpAuthHeader(RequestSigner requestSigner,
+      List<Tuple2<String, String>> headerContents) async {
     var contentToSign = _buildHttpSignatureContent(headerContents);
     var hashToSign = Hashing.sha256hashing(contentToSign);
 
-    var signatureBase64 = requestSigner.signToBase64(hashToSign);
+    var signatureBase64 = await requestSigner.signToBase64(hashToSign);
     var keyId = requestSigner.accountId;
     var headersString = headerContents.map((e) => e.item1).join(' ');
 
@@ -74,25 +69,17 @@ class SignInterceptor extends CustomInterceptor {
         ',signature=\"$signatureBase64\",headers=\"$headersString\"';
   }
 
-  HttpRequest buildSignedRequest(Chain chain) {
-    var method = chain.request().method;
-    var url = chain.request().uri;
+  buildSignedRequest(RequestOptions options) async {
+    var method = options.method;
+    var url = options.uri;
     var relativeUrl = url.toString().substring(_baseUrl.length);
 
     if (!(relativeUrl[0] == "/")) {
       relativeUrl = "/$relativeUrl";
     }
 
-    var headers = getSignatureHeaders(_requestSigner, method, relativeUrl);
+    var headers = await getSignatureHeaders(_requestSigner, method, relativeUrl);
 
-    headers.forEach((key, value) {
-      chain.request().headers.add(key, value);
-    });
-
-    /*  var r = new http.Request(method, url);
-    r.headers.clear();
-    r.headers.addAll(headers);*/
-
-    return chain.request();
+    options.headers.addAll(headers);
   }
 }
