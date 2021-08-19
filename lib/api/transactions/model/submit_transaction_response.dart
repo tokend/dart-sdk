@@ -11,13 +11,15 @@ class SubmitTransactionResponse {
       this._envelopeXdr, this._resultXdr, this.resultMetaXdr);
 
   SubmitTransactionResponse.fromJson(Map<String, dynamic> json)
-      : extras = Extras.fromJson(json['extras']),
-        ledger = json['ledger'],
-        createdAt = json['created_at'],
-        hash = json['hash'],
-        _envelopeXdr = json['envelope_xdr'],
-        _resultXdr = json['result_xdr'],
-        resultMetaXdr = json['result_meta_xdr'];
+      : extras = json['data']['extras'] != null
+            ? Extras.fromJson(json['data']['extras'])
+            : null,
+        ledger = json['data']['ledger'],
+        createdAt = json['data']['created_at'],
+        hash = json['data']['hash'],
+        _envelopeXdr = json['data']['envelope_xdr'],
+        _resultXdr = json['data']['result_xdr'],
+        resultMetaXdr = json['data']['result_meta_xdr'];
 
   bool get isSuccess => ledger != null;
 

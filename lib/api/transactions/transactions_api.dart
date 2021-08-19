@@ -58,7 +58,15 @@ class TransactionsApi {
     try {
       var response = await _service.post("v3/transactions",
           body: {'tx': envelopeBase64, 'wait_for_ingest': waitForIngest});
-      return SubmitTransactionResponse.fromJson(response);
+      return SubmitTransactionResponse(
+          null,
+          response['data']['ledger_sequence'],
+          response['data']['created_at'],
+          response['data']['hash'],
+          response['data']['envelope_xdr'],
+          response['data']['result_xdr'],
+          response['data']['result_meta_xdr']
+      );
     } on DioError catch (e) {
       switch (e.response?.statusCode) {
         case 400:
