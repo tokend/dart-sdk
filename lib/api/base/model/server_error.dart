@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// Represents Server error.
 class ServerError {
   final String? title;
@@ -11,7 +9,7 @@ class ServerError {
 
   ServerError.fromJson(Map<String, dynamic> json)
       : title = json["title"],
-        status = json["status"],
+        status = int.parse(json["status"]),
         detail = json["detail"],
-        meta = jsonDecode(json["meta"]);
+        meta = json["meta"] != null ? json["meta"] : null;
 }

@@ -1,19 +1,23 @@
 import 'dart:convert';
 
 import 'package:dart_sdk/api/base/model/error_body.dart';
+import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/transactions/model/submit_transaction_response.dart';
+import 'package:dart_sdk/api/transactions/model/transaction_failed_exception.dart';
+import 'package:dart_sdk/api/transactions/model/transaction_resource.dart';
 import 'package:dart_wallet/transaction.dart' as Transaction;
 import 'package:dart_wallet/xdr/xdr_types.dart';
 import 'package:dio/dio.dart';
 
 class TransactionsApi {
-  final Dio _dio;
+  final CustomRequestsApi _service;
 
-  TransactionsApi(this._dio);
+  TransactionsApi(this._service);
 
   /// @return transaction by it's ID
-  Future<void> getById(String id) {
-    return _dio.get("v3/transactions/$id");
+  Future<TransactionResource> getById(String id) async {
+    var response = await _service.get("v3/transactions/$id");
+    return TransactionResource.fromJson(response);
   }
 
   SubmitTransactionResponse? _getResponseFromHttpException(
@@ -39,26 +43,27 @@ class TransactionsApi {
   }
 
   /// Submits given transaction
-  void submitTransaction(
+  Future<SubmitTransactionResponse?> submitTransaction(
           Transaction.Transaction transaction, bool waitForIngest) =>
       submitTransactionEnvelope(transaction.getEnvelope(), waitForIngest);
 
   /// Submits given transaction envelope
-  void submitTransactionEnvelope(
+  Future<SubmitTransactionResponse?> submitTransactionEnvelope(
           TransactionEnvelope transactionEnvelope, bool waitForIngest) =>
       submit(transactionEnvelope.toBase64(), waitForIngest);
 
   /// Submits given transaction envelope
-  void submit(String envelopeBase64, bool waitForIngest) async {
+  Future<SubmitTransactionResponse?> submit(
+      String envelopeBase64, bool waitForIngest) async {
     try {
-      var response = await _dio.post("v3/transactions",
-          data: {'tx': envelopeBase64, 'wait_for_ingest': waitForIngest});
-      SubmitTransactionResponse.fromJson(jsonDecode(response.data));
+      var response = await _service.post("v3/transactions",
+          body: {'tx': envelopeBase64, 'wait_for_ingest': waitForIngest});
+      return SubmitTransactionResponse.fromJson(response);
     } on DioError catch (e) {
       switch (e.response?.statusCode) {
         case 400:
-          var response = _getResponseFromHttpException(e.response);
-          break;
+          var exception = _getResponseFromHttpException(e.response);
+          throw exception != null ? TransactionFailedException(exception) : e;
         default:
           throw e;
       }

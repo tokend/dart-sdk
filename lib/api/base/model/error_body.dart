@@ -4,11 +4,15 @@ import 'package:dart_sdk/api/base/model/server_error.dart';
 
 /// Holds errors returned from server.
 class ErrorBody {
-  final List<ServerError> errors;
+  List<ServerError> errors = [];
 
   ErrorBody(this.errors);
 
-  ErrorBody.fromJson(Map<String, dynamic> json) : errors = json["errors"];
+  ErrorBody.fromJson(Map<String, dynamic> json) {
+    json['errors'].forEach((v) {
+      errors.add(ServerError.fromJson(v));
+    });
+  }
 
   /// Returns first error or [null] if there are no errors somehow.
   ServerError? get firstOrNull => errors.first;

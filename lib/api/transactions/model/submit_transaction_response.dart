@@ -54,5 +54,5 @@ class ResultCodes {
 
   ResultCodes.fromJson(Map<String, dynamic> json)
       : transactionResultCode = json['transaction'],
-        operationsResultCodes = json['operations'];
+        operationsResultCodes = List<String>.from(json['operations']);
 }
