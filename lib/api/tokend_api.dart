@@ -1,5 +1,6 @@
 import 'package:dart_sdk/api/base/base_api.dart';
 import 'package:dart_sdk/api/documents/documents_api.dart';
+import 'package:dart_sdk/api/v3/tokenD_api_v3.dart';
 import 'package:dart_sdk/api/wallets/wallets_api.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
@@ -21,4 +22,10 @@ class TokenDApi extends BaseApi {
   DocumentsApi get documents => DocumentsApi(getService());
 
   WalletsApi get wallets => WalletsApi(getService());
+
+  TokenDApiV3 get v3 => TokenDApiV3(rootUrl,
+      requestSigner: requestSigner,
+      tfaCallback: tfaCallback,
+      extraHeaders: extraHeaders,
+      withLogs: withLogs);
 }

@@ -1,5 +1,6 @@
 import 'package:dart_sdk/api/base/model/forbidden_exception.dart';
 import 'package:dart_sdk/api/base/model/server_error.dart';
+import 'package:dart_sdk/api/tfa/model/tfa_factor.dart';
 
 class InvalidOpException implements Exception {
   final String message;
@@ -11,7 +12,7 @@ class InvalidOpException implements Exception {
 
 class NeedTfaException extends ForbiddenException {
   final int factorId;
-  final String factorType;
+  final TfaFactorType factorType;
   final String token;
   final String keychainData;
   final String salt;
@@ -35,7 +36,7 @@ class NeedTfaException extends ForbiddenException {
       var meta = error.meta;
       return NeedTfaException(
         meta?[FACTOR_ID] ?? 0,
-        (meta?[FACTOR_TYPE] ?? null).toString(),
+        (meta?[FACTOR_TYPE] ?? null).toString().fromLiteral(),
         (meta?[TOKEN] ?? null).toString(),
         (meta?[KEYCHAIN_DATA] ?? null).toString(),
         (meta?[SALT] ?? null).toString(),

@@ -35,8 +35,8 @@ class KdfAttributes {
 
   Uint8List? get salt => encodedSalt?.decodeBase64();
 
-  set setSalt(Uint8List value) {
-    encodedSalt = value.encodeBase64String();
+  set setSalt(Uint8List? value) {
+    encodedSalt = value?.encodeBase64String();
   }
 
   int get bytes => bits ~/ 8;

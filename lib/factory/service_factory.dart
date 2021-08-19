@@ -32,7 +32,7 @@ class ServiceFactory {
     Dio _dio = Dio(options);
 
     if (_withLogs) {
-      _dio.interceptors.add(LogInterceptor(responseBody: true));
+      _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     }
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));

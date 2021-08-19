@@ -23,7 +23,7 @@ class EncryptedWalletAccount {
     this.accountId = accountId;
     this.email = email;
     this.encodedSalt = encodedSalt.encodeBase64String();
-    this.encodedSalt = encodedKeychainData.encode();
+    this.encodedKeychainData = encodedKeychainData.encode();
   }
 
   EncryptedWalletAccount.fromJson(Map<String, dynamic> json)
@@ -35,7 +35,7 @@ class EncryptedWalletAccount {
   Map<String, dynamic> toJson() => {
         'account_id': accountId,
         'email': email,
-        'encoded_salt': encodedSalt,
+        'salt': encodedSalt,
         'keychain_data': encodedKeychainData,
       };
 

@@ -105,7 +105,7 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  EncryptedWalletAccount encryptAccount(String email, Account account,
+  static EncryptedWalletAccount encryptAccount(String email, Account account,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
     return encryptAccounts(
         email, List.of([account]), walletEncryptionKey, keyDerivationSalt);
@@ -120,7 +120,7 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  encryptAccounts(String email, List<Account> accounts,
+  static encryptAccounts(String email, List<Account> accounts,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
     var sourceRandom = SecureRandom();
     String s = sourceRandom.nextString(length: IV_LENGTH);

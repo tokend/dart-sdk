@@ -45,4 +45,8 @@ class KeychainData {
     return KeychainData(
         iv.encodeBase64String(), cipherText.encodeBase64String());
   }
+
+  static KeychainData fromEncoded(String rawString) {
+    return fromJson(String.fromCharCodes(rawString.decodeBase64()));
+  }
 }
