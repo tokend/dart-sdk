@@ -10,10 +10,14 @@ class Util {
     return TokenDApi(url, tfaCallback: tfaCallback);
   }
 
+  static TokenDApi getLocalApi(
+      {url = Config.API_LOCAL_URL, TfaCallback? tfaCallback}) {
+    return TokenDApi(url, tfaCallback: tfaCallback);
+  }
+
   static TokenDApi getSignedApi(Account account,
       {url = Config.API_URL, TfaCallback? tfaCallback}) {
     return TokenDApi(url,
         requestSigner: AccountRequestSigner(account), tfaCallback: tfaCallback);
   }
-
 }

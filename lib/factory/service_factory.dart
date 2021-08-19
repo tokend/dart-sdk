@@ -16,7 +16,8 @@ class ServiceFactory {
 
   static const _HEADER_ACCEPT_NAME = "Accept";
   static const _HEADER_CONTENT_TYPE_NAME = "Content-Type";
-  static const _CONTENT_TYPE = "application/vnd.api+json";
+  static const _ACCEPT_CONTENT_TYPE = "application/vnd.api+json";
+  static const _CONTENT_TYPE = "application/json";
 
   TfaVerificationService getTfaVerificationService() {
     var options =
@@ -32,7 +33,8 @@ class ServiceFactory {
     Dio _dio = Dio(options);
 
     if (_withLogs) {
-      _dio.interceptors.add(LogInterceptor(responseBody: true));
+      _dio.interceptors
+          .add(LogInterceptor(responseBody: true, requestBody: true));
     }
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));
@@ -47,7 +49,7 @@ class ServiceFactory {
   Map<String, String?> _getDefaultHeaders(Map<String, String?>? extraHeaders) {
     var defaultMap = {
       _HEADER_CONTENT_TYPE_NAME: _CONTENT_TYPE,
-      _HEADER_ACCEPT_NAME: _CONTENT_TYPE
+      _HEADER_ACCEPT_NAME: _ACCEPT_CONTENT_TYPE
     };
     if (extraHeaders != null) {
       defaultMap.addAll(filterNotNullValues(extraHeaders));
