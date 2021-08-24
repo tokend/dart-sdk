@@ -25,9 +25,9 @@ enum TfaFactorType {
 extension TfaFactorExt on String {
   TfaFactorType fromLiteral() {
     var type = TfaFactorType.UNKNOWN;
-    TfaFactorType.values.forEach((type) {
-      if (describeEnum(type) == this) {
-        type = type;
+    TfaFactorType.values.forEach((t) {
+      if (describeEnum(t).toUpperCase() == this.toUpperCase()) {
+        type = t;
       }
     });
 

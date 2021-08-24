@@ -24,38 +24,37 @@ class WalletsApi {
   /// See <a href="https://tokend.gitlab.io/docs/?http#get-wallet">Docs</a>
   Future<WalletData> getById(String walletId,
       {Map<String, dynamic> queryMap = const {}}) {
-    try {
-      return customRequestsApi
-          .get("wallets/$walletId", query: queryMap)
-          .then((response) => WalletData.fromJson(response['data']));
-    } on DioError catch (e) {
-      switch (e.response?.statusCode) {
+    return customRequestsApi
+        .get("wallets/$walletId", query: queryMap)
+        .then((response) => WalletData.fromJson(response['data']))
+        .onError((error, stackTrace) {
+      switch ((error as DioError).response?.statusCode) {
         case 403:
           throw EmailNotVerifiedException(walletId);
         case 404:
+          throw InvalidCredentialsException("Password");
         case 410:
           throw InvalidCredentialsException("Password");
         default:
-          throw e;
+          throw error;
       }
-    }
+    });
   }
 
   /// Will create new wallet.
   /// See <a href="https://tokend.gitlab.io/docs/?http#create-wallet">Docs</a>
   Future<WalletData> create(WalletData data) async {
-    try {
-      return customRequestsApi
-          .post('wallets', body: json.encode(WalletResourceBody(data).toJson()))
-          .then((response) => WalletData.fromJson(response['data']));
-    } on DioError catch (e) {
-      switch (e.response?.statusCode) {
+    return customRequestsApi
+        .post('wallets', body: json.encode(WalletResourceBody(data).toJson()))
+        .then((response) => WalletData.fromJson(response['data']))
+        .onError((error, stackTrace) {
+      switch ((error as DioError).response?.statusCode) {
         case 409:
           throw EmailAlreadyTakenException();
         default:
-          throw e;
+          throw error;
       }
-    }
+    });
   }
 
   /// Request is similar to wallet [create] but also contains additional transaction resource
@@ -63,7 +62,7 @@ class WalletsApi {
   /// See <a href="https://tokend.gitlab.io/docs/?http#update-wallet">Docs</a>
   Future<void> update(String walletId, WalletData data) {
     return customRequestsApi.put('wallets/$walletId',
-        body: WalletResourceBody(data));
+        body: json.encode(WalletResourceBody(data).toJson()));
   }
 
   /// Verifies wallet with given ID.
@@ -106,16 +105,16 @@ class WalletsApi {
   /// Will return current default derivation parameters or parameters used to derive specific wallet.
   /// See <a href="https://tokend.gitlab.io/docs/?http#get-kdf-params">Docs</a>
   Future<LoginParams> getLoginParams(String? email, bool isRecovery) async {
-    try {
-      var response = await customRequestsApi.get("wallets/kdf",
-          query: {"email": email, "is_recovery": isRecovery});
-      return LoginParams.fromJson(response['data']);
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
+    var response = await customRequestsApi.get("wallets/kdf", query: {
+      "email": email,
+      "is_recovery": isRecovery
+    }).onError((error, stackTrace) {
+      if ((error as DioError).response?.statusCode == 404) {
         throw InvalidCredentialsException("Email");
       } else {
-        throw e;
+        throw error;
       }
-    }
+    });
+    return LoginParams.fromJson(response['data']);
   }
 }

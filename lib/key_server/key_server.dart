@@ -112,12 +112,12 @@ class KeyServer {
   /// Loads default login params, loads default signer role,
   /// creates a wallet with single signer and submits it to the system.
   Future<WalletCreateResult> createAndSaveWalletWithSigners(String email,
-      String password, Account rootAccount, Iterable<SignerData> signers,
+      String password, List<Account> accounts, Iterable<SignerData> signers,
       {String? verificationCode}) async {
     return _getCreateAndSaveWalletResult(
       email,
       password,
-      List.of([rootAccount]),
+      accounts,
       signers,
       verificationCode: verificationCode,
     );
@@ -132,7 +132,7 @@ class KeyServer {
     var loginParams = await getLoginParams();
 
     var kdf = loginParams.kdfAttributes;
-    var kdfVersion = (loginParams.id);
+    var kdfVersion = loginParams.id;
 
     WalletCreateResult result = await createWallet(
         email, password, kdf, kdfVersion, accounts, signers,
@@ -166,21 +166,17 @@ class KeyServer {
       NetworkParams networkParams,
       SignersApiV3 signersApi,
       KeyValueStorageApiV3 keyValueApi) async {
-    List<SignerData> signers;
-    try {
-      signers = await signersApi.get(walletInfo.accountId).then((signers) {
-        var signersList = signers['data'] as List<Map<String, dynamic>>;
-        return signersList
-            .map((signer) => SignerData.fromJson(signer))
-            .toList();
-      });
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
+    List<SignerData> signers = [];
+    await (signersApi.get(walletInfo.accountId).then((signersResponse) {
+      var signersList = signersResponse['data'];
+      signersList.forEach((signer) => signers.add(SignerData.fromJson(signer)));
+    }).onError((error, stackTrace) {
+      if ((error as DioError).response?.statusCode == 404) {
         signers = List.empty();
       } else {
-        throw e;
+        throw error;
       }
-    }
+    }));
 
     var defaultSignerRole = await getDefaultSignerRole(keyValueApi);
     SignerData currentAccountSigner =
@@ -221,7 +217,7 @@ class KeyServer {
         .where((signer) => signer.roleId != RECOVERY_SIGNER_ROLE_ID)
         .map((signer) => signer.id)
         .toList();
-    var signersUpdateTx = createSignersUpdateTransaction(
+    var signersUpdateTx = await createSignersUpdateTransaction(
         networkParams,
         currentAccount,
         walletInfo.accountId,
@@ -247,7 +243,7 @@ class KeyServer {
         walletInfo.email,
         newPassword,
         newLoginParams.kdfAttributes,
-        (newLoginParams.id),
+        newLoginParams.id,
         newAccounts,
         List.empty());
 
@@ -396,12 +392,12 @@ class KeyServer {
   ///
   /// [currentAccount] account of a valid signer to be a tx signer
   /// [signersToRemove] account IDs of signers that will be removed
-  static Transaction.Transaction createSignersUpdateTransaction(
+  static Future<Transaction.Transaction> createSignersUpdateTransaction(
       NetworkParams networkParams,
       Account currentAccount,
       String originalAccountId,
       Iterable<SignerData> signersToAdd,
-      Iterable<String> signersToRemove) {
+      Iterable<String> signersToRemove) async {
     OperationBodyManageSigner? removeCurrentAccountSigner;
     if (signersToRemove.contains(currentAccount.accountId)) {
       removeCurrentAccountSigner = OperationBodyManageSigner(
@@ -429,9 +425,9 @@ class KeyServer {
     var trBuilder =
         TransactionBuilder.FromPubKey(networkParams, originalAccountId)
             .addSigner(currentAccount)
-            .addOperations(
-                removeSignersButNoCurrent.where((signer) => signer != null)
-                    as List<OperationBodyManageSigner>)
+            .addOperations(removeSignersButNoCurrent
+                .where((signer) => signer != null)
+                .toList() as List<OperationBodyManageSigner>)
             .addOperations(signersToAdd.map((signerToAdd) {
       return OperationBodyManageSigner(ManageSignerOp(
           ManageSignerOpDataCreate(
@@ -450,7 +446,7 @@ class KeyServer {
       trBuilder.addOperation(removeCurrentAccountSigner);
     }
 
-    return trBuilder.build();
+    return await trBuilder.build();
   }
 
 //endregion

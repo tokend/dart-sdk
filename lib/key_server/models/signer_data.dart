@@ -21,17 +21,17 @@ class SignerData {
 
   SignerData.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        identity = json['identity'],
-        weight = json['weight'],
-        roleId = json['role_id'],
-        detailsJson = json['details'];
+        identity = json['attributes']['identity'],
+        weight = json['attributes']['weight'],
+        roleId = int.parse(json['relationships']['role']['data']['id']),
+        detailsJson = json['attributes']['details'].toString();
 
   SignerData.primary(
       this.id, this.identity, this.weight, this.roleId, this.detailsJson);
 
   SignerData(String id, int roleId) {
     this.id = id;
-    this.roleId = (roleId);
+    this.roleId = roleId;
     identity = DEFAULT_SIGNER_IDENTITY;
     weight = DEFAULT_SIGNER_WEIGHT;
     detailsJson = null;

@@ -12,8 +12,15 @@ class WalletRelation {
   Map<dynamic, dynamic> toJson() => {
         'id': id,
         'type': type,
-        'attributes': attributes?.toJson(),
+        'attributes': getAttributes(attributes),
       };
+
+  Map<dynamic, dynamic> getAttributes(dynamic attributes) {
+    if (attributes is Map<String, String>)
+      return attributes;
+    else
+      return attributes?.toJson();
+  }
 
   WalletRelation.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -30,7 +37,7 @@ class WalletRelation {
 
   static transaction(Transaction transaction) {
     return WalletRelation('tx_id', 'transaction',
-        Map.fromEntries([MapEntry('envelope', transaction.getEnvelope())]));
+        {'envelope': transaction.getEnvelope().toBase64()});
   }
 
   static signer(SignerData signerData) {

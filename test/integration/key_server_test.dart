@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:dart_sdk/api/tfa/model/tfa_factor.dart';
 import 'package:dart_sdk/api/tokend_api.dart';
+import 'package:dart_sdk/api/wallets/model/exceptions.dart';
 import 'package:dart_sdk/key_server/key_server.dart';
 import 'package:dart_sdk/key_server/models/signer_data.dart';
 import 'package:dart_sdk/key_server/models/wallet_create_result.dart';
@@ -10,14 +11,15 @@ import 'package:dart_sdk/tfa/exceptions.dart';
 import 'package:dart_sdk/tfa/password_tfa_otp_generator.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
 import 'package:dart_sdk/tfa/tfa_verifier.dart';
+import 'package:dart_sdk/utils/extensions/horizon_state_resource.dart';
 import 'package:dart_wallet/account.dart';
-import 'package:dart_wallet/network_params.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../util.dart';
 
 void main() {
+  //OK
   test('sign up simple', () async {
     var email =
         'signUpTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -38,6 +40,7 @@ void main() {
     await checkSignUpResult(email, password, result, api);
   });
 
+  //OK
   test('sign up with signers', () async {
     var email =
         'signUpWithSignersTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -65,7 +68,7 @@ void main() {
     print("Attempt to sign up $email $password");
 
     var result = await keyServer.createAndSaveWalletWithSigners(
-        email, password, rootAccount, signers);
+        email, password, List.of([rootAccount]), signers);
 
     print("Account ID is ${result.rootAccount.accountId}");
 
@@ -95,6 +98,7 @@ void main() {
     );
   });
 
+  //OK
   test('sign in', () async {
     var email = 'testuser@gmail.com';
     var password = 'testuser@gmail.com';
@@ -110,8 +114,51 @@ void main() {
     print(walletInfo.secretSeeds.first);
   });
 
+  //OK
+  test('sign in invalid credentials', () async {
+    var email =
+        'signUpInvalidCredentialsTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
+    var password = 'qwe123';
+
+    var api = Util.getApi();
+
+    var keyServer = KeyServer(api.wallets);
+
+    print("Attempt to sign up $email $password");
+    var newAccount = await Account.random();
+
+    await keyServer.createAndSaveWallet(
+        email, password, api.v3.keyValue, newAccount);
+
+    try {
+      await keyServer.getWalletInfo(email, "qwe12");
+    } catch (e) {
+      expect(e is InvalidCredentialsException, true,
+          reason: "InvalidCredentialsException expected, but"
+              "${e.toString()} occurred");
+
+      expect(
+          (e as InvalidCredentialsException).message.toLowerCase(), 'password',
+          reason: 'Password was wrong but message is ${e.message}');
+    }
+
+    try {
+      await keyServer.getWalletInfo(
+          Random.secure().nextInt(Int32.MAX_VALUE.toInt()).toString(),
+          password);
+    } catch (e) {
+      expect(e is InvalidCredentialsException, true,
+          reason: "InvalidCredentialsException expected, but"
+              "${e.toString()} occurred");
+
+      expect((e as InvalidCredentialsException).message.toLowerCase(), 'email',
+          reason: 'Password was wrong but message is ${e.message}');
+    }
+  });
+
   test('password change', () async {
-    var email = 'passwordChangeTest@gmail.com';
+    var email =
+        'passwordChangeTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
     var password = 'testuser@gmail.com';
 
     var api = Util.getApi();
@@ -131,6 +178,9 @@ void main() {
 
     var signedApi = Util.getSignedApi(rootAccount, tfaCallback: tfaCallback);
 
+    var netParams =
+        await api.info.getSystemInfo().then((value) => value.toNetworkParams());
+
     var newPassword = 'qweqwe';
     var newAccount = await Account.random();
 
@@ -141,8 +191,7 @@ void main() {
         rootAccount,
         newPassword,
         newAccount,
-        NetworkParams('passphrase'),
-        //TODO add system info
+        netParams,
         api.v3.signers,
         api.v3.keyValue);
 
@@ -187,6 +236,113 @@ void main() {
         reason:
             'The old signer ${rootAccount.accountId} must be removed from account signers');
   });
+
+  //Returns 500
+  test('sign up taken email', () async {
+    var email =
+        'signUpTakenEmailTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
+    var password = 'testuser@gmail.com';
+
+    var api = Util.getApi();
+
+    var keyServer = KeyServer(api.wallets);
+
+    print("Attempt to sign up $email $password");
+    var newAccount = await Account.random();
+
+    await keyServer.createAndSaveWallet(
+        email, password, api.v3.keyValue, newAccount);
+
+    try {
+      await keyServer.createAndSaveWallet(
+          email, password, api.v3.keyValue, newAccount);
+    } catch (e) {
+      expect(e is EmailAlreadyTakenException, true);
+    }
+  });
+
+  //OK
+  test('sign up many accounts', () async {
+    var accounts = <Account>[];
+    for (int i = 0; i < 4; i++) {
+      accounts.add(await Account.random());
+    }
+
+    var email =
+        'signUpInvalidCredentialsTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
+    var password = 'qwe123';
+
+    var api = Util.getApi();
+
+    var keyServer = KeyServer(api.wallets);
+
+    print("Attempt to sign up $email $password");
+
+    var signerRole = (await api.v3.keyValue
+        .getById(KeyServer.DEFAULT_SIGNER_ROLE_KEY_VALUE_KEY))['value']['u32'];
+
+    var signers =
+        accounts.map((signer) => SignerData(signer.accountId, signerRole));
+
+    var result = await keyServer.createAndSaveWalletWithSigners(
+        email, password, accounts, signers);
+
+    print('Account ID is ${result.rootAccount.accountId}');
+    expect(accounts.first.secretSeed, result.rootAccount.secretSeed,
+        reason: "Root account must be equal to the first one");
+
+    for (int i = 0; i < accounts.length; i++) {
+      var account = accounts[i];
+      expect(
+        account.accountId,
+        result.accounts[i].accountId,
+        reason: "Result wallet secret seed #$i must be equal to the local one",
+      );
+    }
+
+    await checkSignUpResult(email, password, result, api);
+
+    var actualSigners = (await api.v3.signers
+        .get(result.walletData.attributes.accountId))['data'];
+
+    var allSignersHaveRole = true;
+    actualSigners.forEach((signer) {
+      if (signer['relationships']['role']['data']['id'] !=
+          signerRole.toString()) {
+        allSignersHaveRole = false;
+      }
+    });
+
+    var allSignersCreated = true;
+
+    int i = 0;
+    signers.forEach((signer) {
+      if (signer.id != actualSigners[i]['id']) allSignersCreated = false;
+      i++;
+    });
+
+    expect(
+      true,
+      allSignersHaveRole,
+      reason: "All signers must have specified role $signerRole",
+    );
+
+    expect(
+      true,
+      allSignersCreated,
+      reason: "All specified signers must be created",
+    );
+
+    var walletInfo = await keyServer.getWalletInfo(email, password);
+
+    for (int i = 0; i < accounts.length; i++) {
+      expect(
+        accounts[i].secretSeed,
+        walletInfo.secretSeeds[i],
+        reason: "Remote wallet secret seed #$i must be equal to the local one",
+      );
+    }
+  });
 }
 
 class _AnonymousTfaCallback extends TfaCallback {
@@ -196,8 +352,7 @@ class _AnonymousTfaCallback extends TfaCallback {
   _AnonymousTfaCallback(this.email, this.password);
 
   @override
-  Future<void> onTfaRequired(
-      NeedTfaException exception, Interface verifierInterface) async {
+  onTfaRequired(NeedTfaException exception, Interface verifierInterface) async {
     if (exception.factorType == TfaFactorType.PASSWORD) {
       verifierInterface.verify(
           await PasswordTfaOtpGenerator().generate(exception, email, password));

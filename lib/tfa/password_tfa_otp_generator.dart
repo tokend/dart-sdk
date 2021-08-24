@@ -18,7 +18,7 @@ class PasswordTfaOtpGenerator {
     var keychainData = KeychainData.fromEncoded(tfaException.keychainData);
     var seed = '';
     try {
-      WalletEncryption.decryptSecretSeed(keychainData, key);
+      seed = WalletEncryption.decryptSecretSeed(keychainData, key);
     } catch (e) {} finally {
       key.fillRange(0, key.length, 0);
     }
