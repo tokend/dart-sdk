@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_sdk/api/base/model/data_page.dart';
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dio/dio.dart';
 import 'package:japx/japx.dart';
@@ -8,6 +9,7 @@ import 'package:japx/japx.dart';
 ///
 /// If response class is [String] or [ByteArray] or primitive Java byte array,
 /// then no mapping will be performed.
+/// For pagination use [DataPage].
 class CustomRequestsApi {
   CustomRequestService _customRequestService;
   Dio _dio;

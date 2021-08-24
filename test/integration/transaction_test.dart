@@ -42,7 +42,11 @@ void main() {
     var netParams =
         await api.info.getSystemInfo().then((value) => value.toNetworkParams());
     var account = await Config.ADMIN_ACCOUNT;
-    var accountRole = 5;
+    var accountRole = await api
+        .getService()
+        .get("v3/account_roles")
+        .then((value) => int.parse(value['data'][0]['id']));
+    // var accountRole = 5;
     var signerRole = 5;
     //TODO: remove hardcoded role values, implement getRolesApi
 
