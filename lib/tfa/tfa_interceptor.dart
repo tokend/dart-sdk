@@ -34,6 +34,27 @@ class TfaInterceptor extends Interceptor {
     super.onResponse(response, handler);
   }
 
+  @override
+  void onError(DioError err, ErrorInterceptorHandler handler) {
+    if (err.response?.statusCode == HttpStatus.forbidden) {
+      _verificationService.dio.interceptors.requestLock.lock();
+      var exception = extractTfaException(err.response!);
+      if (exception != null && _tfaCallback != null) {
+        var verifier =
+            TfaVerifier(_verificationService, exception).onVerified(() {
+          _verificationService.dio.interceptors.requestLock.unlock();
+        }).onVerificationCancelled(() {
+          throw Exception(
+              'Request was interrupted due to the cancelled TFA verification');
+        });
+
+        _tfaCallback?.onTfaRequired(
+            exception, verifier.verifierInterface); //TODO
+
+      }
+    }
+  }
+
   NeedTfaException? extractTfaException(Response response) {
     var error;
     try {
