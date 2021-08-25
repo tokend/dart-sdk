@@ -14,51 +14,37 @@ class TfaInterceptor extends Interceptor {
   TfaInterceptor(this._verificationService, this._tfaCallback);
 
   @override
-  Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
-    // TODO: implement onError
-    if (err.response != null &&
-        err.response?.statusCode == HttpStatus.forbidden) {
-      var exception = extractTfaException(err.response!);
+  Future<void> onError(DioError error, ErrorInterceptorHandler handler) async {
+    if (error.response?.statusCode == HttpStatus.forbidden) {
+      var exception = _extractTfaException(error.response!);
       if (exception != null && _tfaCallback != null) {
-        var verifier = TfaVerifier.get(_verificationService, exception.walletId,
-            exception.factorId, exception.token);
-
-        _tfaCallback?.onTfaRequired(
-            exception, verifier.verifierInterface); //TODO
-
-        //TODO
-      } else if (exception != null) {
-        throw exception;
-      } else {
-        handler.next(err);
-      }
-    } else {
-      super.onError(err, handler);
-    }
-  }
-
-  @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == HttpStatus.forbidden) {
-      _verificationService.dio.interceptors.requestLock.lock();
-      var exception = extractTfaException(err.response!);
-      if (exception != null && _tfaCallback != null) {
-        var verifier =
-            TfaVerifier(_verificationService, exception).onVerified(() {
-          _verificationService.dio.interceptors.requestLock.unlock();
+        var verifier = TfaVerifier(
+                TfaVerificationService(_verificationService.dio), exception)
+            .onVerified(() async {
+          RequestOptions requestOptions = error.requestOptions;
+          handler.resolve(await _verificationService.dio.request(
+              requestOptions.path,
+              data: requestOptions.data,
+              queryParameters: requestOptions.queryParameters,
+              options: _getOptions(requestOptions)));
         }).onVerificationCancelled(() {
           throw Exception(
               'Request was interrupted due to the cancelled TFA verification');
         });
 
-        _tfaCallback?.onTfaRequired(
-            exception, verifier.verifierInterface); //TODO
-
+        _tfaCallback?.onTfaRequired(exception, verifier.verifierInterface);
       }
     }
   }
 
-  NeedTfaException? extractTfaException(Response response) {
+  Options _getOptions(RequestOptions requestOptions) {
+    return Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+  }
+
+  NeedTfaException? _extractTfaException(Response response) {
     var error;
     try {
       var responseString = response.data.toString();

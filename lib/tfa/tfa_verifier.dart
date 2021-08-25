@@ -6,19 +6,24 @@ import 'package:japx/japx.dart';
 
 /// Performs OTP verification.
 class TfaVerifier {
-  late final TfaVerificationService service;
-  late final String _walletId;
-  late final int _factorId;
-  late final String _token;
+  final TfaVerificationService service;
+  final String _walletId;
+  final int _factorId;
+  final String _token;
 
   InterfaceImpl get verifierInterface => InterfaceImpl(this);
 
-  TfaVerifier.get(this.service, this._walletId, this._factorId, this._token);
+  // TfaVerifier.get(this.service, this._walletId, this._factorId, this._token);
 
-  TfaVerifier(TfaVerificationService service, NeedTfaException tfaException) {
-    TfaVerifier.get(service, tfaException.walletId, tfaException.factorId,
+  TfaVerifier(TfaVerificationService service, NeedTfaException tfaException)
+      : this.service = service,
+        this._walletId = tfaException.walletId,
+        this._factorId = tfaException.factorId,
+        this._token = tfaException.token;
+
+  /*  TfaVerifier.get(service, tfaException.walletId, tfaException.factorId,
         tfaException.token);
-  }
+  }*/
 
   EmptyCallback? onVerifiedCallback;
   EmptyCallback? onVerificationCancelledCallback;

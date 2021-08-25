@@ -206,10 +206,12 @@ void main() {
     expect(newWalletInfo, remoteNewWalletInfo,
         reason:
             'Updated info from the key server must be equal to the returned one');
-    expect(walletInfo.walletData.id, newWalletInfo.walletIdHex,
+    expect(walletInfo.walletData.id != newWalletInfo.walletIdHex, true,
         reason: 'Wallet ID must be changed after password change');
-    expect(currentWalletInfo.loginParams.kdfAttributes.salt,
-        remoteNewWalletInfo.loginParams.kdfAttributes.salt,
+    expect(
+        currentWalletInfo.loginParams.kdfAttributes.salt !=
+            remoteNewWalletInfo.loginParams.kdfAttributes.salt,
+        true,
         reason: 'Wallet KDF salt must be changed after password change');
     expect(rootAccount.accountId, newWalletInfo.accountId,
         reason: 'Wallet account ID must be unchanged after password change');
@@ -232,7 +234,7 @@ void main() {
         reason:
             'A new signer ${newAccount.accountId} must be added to account signers');
 
-    expect(containsOldSigner, true,
+    expect(containsOldSigner, false,
         reason:
             'The old signer ${rootAccount.accountId} must be removed from account signers');
   });
