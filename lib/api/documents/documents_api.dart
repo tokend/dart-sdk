@@ -66,7 +66,6 @@ class DocumentsApi {
   }
 
   Future<Map<String, dynamic>> _requestUpload(dynamic body) {
-    print('body: ${(body as DataEntity<DocumentUploadRequest>).data.toJson()}');
     return customRequestsApi.post('documents',
         body: json.encode(body.toJson()));
   }

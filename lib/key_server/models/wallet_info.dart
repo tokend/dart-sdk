@@ -17,9 +17,7 @@ class WalletInfo {
         walletIdHex = json['walletIdHex'],
         loginParams = json['loginParams'],
         _secretSeeds = json['secretSeeds'],
-        legacySingleSecretSeed = json['secretSeed'] {
-    print('JSON $json');
-  }
+        legacySingleSecretSeed = json['secretSeed'];
 
   List<String> get secretSeeds {
     var legacySeed;

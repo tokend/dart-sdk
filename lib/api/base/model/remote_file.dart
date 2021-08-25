@@ -12,6 +12,11 @@ class RemoteFile {
 
   RemoteFile(this.key, this.name, this.mimeType);
 
+  RemoteFile.fromJson(Map<String, dynamic> json)
+      : key = json['key'],
+        name = json['name'],
+        mimeType = json['mime_type'];
+
   String getUrl(String storageRoot) {
     var delimiter = '/';
     if (storageRoot[storageRoot.length - 1] == '/') {
@@ -28,5 +33,16 @@ class RemoteFile {
   @override
   bool operator ==(Object other) {
     return other is RemoteFile && other.key == this.key;
+  }
+}
+
+extension NullFile on RemoteFile? {
+  @Deprecated("Better push on JS devs to not send " +
+      "invalid file structures as 'no file' instead of using this method")
+  bool isReallyNullOrNullAccordingToTheJavascript() {
+    return this == null ||
+        this?.key.isEmpty == true ||
+        this?.name.isEmpty == true ||
+        this?.mimeType.isEmpty == true;
   }
 }

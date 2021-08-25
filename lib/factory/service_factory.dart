@@ -1,6 +1,3 @@
-import 'dart:html';
-
-import 'package:dart_sdk/api/base/model/error_body.dart';
 import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dart_sdk/signing/request_signer.dart';

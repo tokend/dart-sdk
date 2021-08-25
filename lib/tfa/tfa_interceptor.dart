@@ -14,24 +14,27 @@ class TfaInterceptor extends Interceptor {
   TfaInterceptor(this._verificationService, this._tfaCallback);
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    response.data.toString();
-    if (response.statusCode == HttpStatus.forbidden) {
-      var exception = extractTfaException(response);
+  Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
+    // TODO: implement onError
+    if (err.response != null &&
+        err.response?.statusCode == HttpStatus.forbidden) {
+      var exception = extractTfaException(err.response!);
       if (exception != null && _tfaCallback != null) {
-        var verifier = TfaVerifier(_verificationService, exception)
-            .onVerified(() {})
-            .onVerificationCancelled(() {
-          throw Exception(
-              'Request was interrupted due to the cancelled TFA verification');
-        });
+        var verifier = TfaVerifier.get(_verificationService, exception.walletId,
+            exception.factorId, exception.token);
 
         _tfaCallback?.onTfaRequired(
             exception, verifier.verifierInterface); //TODO
 
+        //TODO
+      } else if (exception != null) {
+        throw exception;
+      } else {
+        handler.next(err);
       }
+    } else {
+      super.onError(err, handler);
     }
-    super.onResponse(response, handler);
   }
 
   @override

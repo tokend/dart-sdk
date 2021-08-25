@@ -10,7 +10,6 @@ class DocumentsService {
   DocumentsService(this.customRequestsApi);
 
   Future<Map<String, dynamic>> requestUpload(dynamic body) {
-    print('BODY: ${(body as DataEntity<DocumentUploadRequest>).data.toJson()}');
     return customRequestsApi.post('documents', body: (body.data.toJson()));
   }
 

@@ -42,8 +42,8 @@ class WalletKeyDerivation {
   /// Derives wallet key for given params
   /// See [ScryptWithMasterKeyDerivation]
   /// See <a href="https://tokend.gitlab.io/docs/#wallet-id-derivation">Wallet key derivation docs</a>
-  static Uint8List deriveKey(Uint8List login, Uint8List password, Uint8List masterKey,
-      KdfAttributes kdfAttributes) {
+  static Uint8List deriveKey(Uint8List login, Uint8List password,
+      Uint8List masterKey, KdfAttributes kdfAttributes) {
     var derivation = ScryptWithMasterKeyDerivation(
         kdfAttributes.n, kdfAttributes.r, kdfAttributes.p, login, masterKey);
     var salt = kdfAttributes.salt;
@@ -62,7 +62,7 @@ class WalletKeyDerivation {
   }
 
   /// Generate salt for system KDF params.
-  Uint8List generateKdfSalt({int lengthBytes = KDF_SALT_LENGTH_BYTES}) {
+  static Uint8List generateKdfSalt({int lengthBytes = KDF_SALT_LENGTH_BYTES}) {
     return getSecureRandomSeed(lengthBytes);
   }
 }

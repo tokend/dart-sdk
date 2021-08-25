@@ -25,6 +25,15 @@ class KdfAttributes {
   KdfAttributes(
       this.algorithm, this.bits, this.n, this.p, this.r, this.encodedSalt);
 
+  Map<String, dynamic> toJson() => {
+    'algorithm': algorithm,
+    'bits': bits,
+    'n': n,
+    'p': p,
+    'r': r,
+    'salt': salt
+  };
+
   KdfAttributes.fromJson(Map<String, dynamic> json)
       : algorithm = json['algorithm'],
         bits = json['bits'],
@@ -35,8 +44,8 @@ class KdfAttributes {
 
   Uint8List? get salt => encodedSalt?.decodeBase64();
 
-  set setSalt(Uint8List value) {
-    encodedSalt = value.encodeBase64String();
+  set setSalt(Uint8List? value) {
+    encodedSalt = value?.encodeBase64String();
   }
 
   int get bytes => bits ~/ 8;
