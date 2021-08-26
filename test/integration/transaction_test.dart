@@ -12,7 +12,7 @@ import '../config.dart';
 import '../util.dart';
 
 void main() {
-  test("submitError", () async {
+  test("error submission", () async {
     var api = Util.getLocalApi();
     var netParams =
         await api.info.getSystemInfo().then((value) => value.toNetworkParams());
@@ -42,9 +42,12 @@ void main() {
     var netParams =
         await api.info.getSystemInfo().then((value) => value.toNetworkParams());
     var account = await Config.ADMIN_ACCOUNT;
-    var accountRole = 5;
-    var signerRole = 5;
-    //TODO: remove hardcoded role values, implement getRolesApi
+
+    var accountRoles = (await api.getService().get('v3/account_roles'))['data'];
+    var accountRole = (accountRoles as List<dynamic>).first['id'];
+
+    var signerRoles = (await api.getService().get('v3/signer_roles'))['data'];
+    var signerRole = (signerRoles as List<dynamic>).first['id'];
 
     var randomAccount = await Account.random();
 
@@ -52,11 +55,11 @@ void main() {
         .addOperation(OperationBodyCreateAccount(CreateAccountOp(
             PublicKeyFactory.fromAccountId(randomAccount.accountId),
             null,
-            Int64(accountRole),
+            Int64(int.parse(accountRole)),
             [
               UpdateSignerData(
                   PublicKeyFactory.fromAccountId(account.accountId),
-                  Int64(signerRole),
+                  Int64(int.parse(signerRole)),
                   1000,
                   0,
                   "{}",

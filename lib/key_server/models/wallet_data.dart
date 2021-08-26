@@ -54,11 +54,11 @@ class WalletData {
             verificationCode);
 
   addRelation(String name, WalletRelation relation) {
-    relationships[name] = WalletRelationDataEntity(relation);
+    relationships[name] = DataEntity(relation);
   }
 
   addArrayRelation(String name, Iterable<WalletRelation> relations) {
-    relationships[name] = WalletArrayRelationDataEntity(relations.toList());
+    relationships[name] = DataEntity(relations.toList());
   }
 
   List<WalletRelation> getFlattenRelationships() {

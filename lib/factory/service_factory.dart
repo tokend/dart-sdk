@@ -21,13 +21,6 @@ class ServiceFactory {
   static const _ACCEPT_CONTENT_TYPE = "application/vnd.api+json";
   static const _CONTENT_TYPE = "application/json";
 
-  TfaVerificationService getTfaVerificationService() {
-    var options =
-        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
-    Dio _dio = Dio(options);
-    return TfaVerificationService(_dio);
-  }
-
   CustomRequestsApi getService(
       {RequestSigner? requestSigner, TfaCallback? tfaCallback}) {
     var options =
@@ -43,7 +36,7 @@ class ServiceFactory {
     }
     if (tfaCallback != null) {
       _dio.interceptors
-          .add(TfaInterceptor(getTfaVerificationService(), tfaCallback));
+          .add(TfaInterceptor(TfaVerificationService(_dio), tfaCallback));
     }
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }

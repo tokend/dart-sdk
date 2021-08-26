@@ -48,7 +48,7 @@ class DocumentsApi {
         filename: fileName, contentType: MediaType.parse(contentType));
 
     var formData =
-        new Map<String, dynamic>.from(policy['data'] as Map<String, dynamic>);
+        new Map<String, dynamic>.from(policy['data']['attributes'] as Map<String, dynamic>);
     formData.remove('id');
     formData.remove('type');
     formData.remove(POLICY_URL_KEY);
@@ -61,7 +61,7 @@ class DocumentsApi {
 
   Future<void> uploadFileMultipart(
       DocumentUploadPolicy policy, FormData data) async {
-    var uploadUrl = policy[POLICY_URL_KEY] ?? "";
+    var uploadUrl = policy['attributes'][POLICY_URL_KEY] ?? "";
     return _upload(uploadUrl, data);
   }
 

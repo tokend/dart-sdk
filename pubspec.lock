@@ -197,7 +197,7 @@ packages:
     description:
       path: "."
       ref: dev
-      resolved-ref: "051fba1e0e287fc1f763be682067a9e67a9dc61c"
+      resolved-ref: c3e90bcde67dfea6495425e301d78485a6cdf470
       url: "https://github.com/tokend/dart-wallet"
     source: git
     version: "0.0.1"
@@ -329,7 +329,7 @@ packages:
       name: logger
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.0"
   logging:
     dependency: transitive
     description:

@@ -13,17 +13,11 @@ class TfaVerifier {
 
   InterfaceImpl get verifierInterface => InterfaceImpl(this);
 
-  // TfaVerifier.get(this.service, this._walletId, this._factorId, this._token);
-
   TfaVerifier(TfaVerificationService service, NeedTfaException tfaException)
       : this.service = service,
         this._walletId = tfaException.walletId,
         this._factorId = tfaException.factorId,
         this._token = tfaException.token;
-
-  /*  TfaVerifier.get(service, tfaException.walletId, tfaException.factorId,
-        tfaException.token);
-  }*/
 
   EmptyCallback? onVerifiedCallback;
   EmptyCallback? onVerificationCancelledCallback;

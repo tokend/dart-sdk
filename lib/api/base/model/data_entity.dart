@@ -1,48 +1,35 @@
-import 'package:dart_sdk/key_server/models/wallet_relation.dart';
-
 /// Represents request body with [T] data.
 class DataEntity<T> {
-  T data;
+  late T data;
 
   DataEntity(this.data);
 
-  DataEntity.fromJson(Map<String, dynamic> json) : data = json['data'];
+  DataEntity.fromJson(dynamic json) {
+    if (json is Map<dynamic, dynamic>) {
+      data = json['data'];
+    } else if (json is List<Map<dynamic, dynamic>>) {
+      var dataList = [];
+      json.forEach((item) {
+        dataList.add(DataEntity.fromJson(item));
+      });
+      data = dataList as T;
+    }
+  }
 
-  //TODO
-  Map<String, dynamic> toJson() => {'data': (data)};
-}
-
-/// Represents request body with [T] data.
-class WalletRelationDataEntity<T> {
-  WalletRelation data;
-
-  WalletRelationDataEntity(this.data);
-
-  WalletRelationDataEntity.fromJson(Map<String, dynamic> json)
-      : data = json['data'];
-
-  //TODO
-  Map<dynamic, dynamic> toJson() => {'data': data.toJson()};
-}
-
-/// Represents request body with [T] data.
-class WalletArrayRelationDataEntity<T> {
-  var data = <WalletRelation>[];
-
-  WalletArrayRelationDataEntity(this.data);
-
-  WalletArrayRelationDataEntity.fromJson(Map<String, dynamic> json)
-      : data = json['data'];
-
-  //TODO
-  Map<dynamic, dynamic> toJson() => {'data': getData(data)};
-
-  List<Map<dynamic, dynamic>> getData(List<WalletRelation> d) {
-    var res = <Map<dynamic, dynamic>>[];
-
-    d.forEach((element) {
-      res.add(element.toJson());
-    });
-    return res;
+  Map<String, dynamic> toJson() {
+    var json;
+    if (data is Iterable) {
+      json = <Map<dynamic, dynamic>>[];
+      (data as Iterable).forEach((element) {
+        json.add(element.toJson());
+      });
+    } else {
+      var list = List.of([data]);
+      // Cast is necessary because of compiler error
+      (list as Iterable).forEach((element) {
+        json = element?.toJson();
+      });
+    }
+    return {'data': json};
   }
 }

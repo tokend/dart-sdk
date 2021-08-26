@@ -19,7 +19,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../util.dart';
 
 void main() {
-  //OK
   test('sign up simple', () async {
     var email =
         'signUpTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -40,7 +39,6 @@ void main() {
     await checkSignUpResult(email, password, result, api);
   });
 
-  //OK
   test('sign up with signers', () async {
     var email =
         'signUpWithSignersTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -98,10 +96,10 @@ void main() {
     );
   });
 
-  //OK
   test('sign in', () async {
-    var email = 'testuser@gmail.com';
-    var password = 'testuser@gmail.com';
+    var email =
+        'signInTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
+    var password = 'qwe123';
 
     var api = Util.getApi();
 
@@ -109,12 +107,19 @@ void main() {
 
     print("Attempt to sign up $email $password");
 
+    var newAccount = await Account.random();
+
+    var crearedWallet = await keyServer.createAndSaveWallet(
+        email, password, api.v3.keyValue, newAccount);
+
     var walletInfo = await keyServer.getWalletInfo(email, password);
 
-    print(walletInfo.secretSeeds.first);
+    expect(email.toLowerCase(), walletInfo.email,
+        reason: "Remote wallet email must be " + "a lowercased current");
+
+    expect(crearedWallet.rootAccount.accountId, walletInfo.accountId);
   });
 
-  //OK
   test('sign in invalid credentials', () async {
     var email =
         'signUpInvalidCredentialsTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -239,7 +244,7 @@ void main() {
             'The old signer ${rootAccount.accountId} must be removed from account signers');
   });
 
-  //Returns 500
+  //TODO returns 500 on job-platforms-dev-edition
   test('sign up taken email', () async {
     var email =
         'signUpTakenEmailTest${Random.secure().nextInt(Int32.MAX_VALUE.toInt())}@gmail.com';
@@ -263,7 +268,6 @@ void main() {
     }
   });
 
-  //OK
   test('sign up many accounts', () async {
     var accounts = <Account>[];
     for (int i = 0; i < 4; i++) {
@@ -315,11 +319,15 @@ void main() {
       }
     });
 
-    var allSignersCreated = true;
-
+    var allSignersCreated = [false, false, false, false];
     int i = 0;
+
     signers.forEach((signer) {
-      if (signer.id != actualSigners[i]['id']) allSignersCreated = false;
+      (actualSigners as List<dynamic>).forEach((s) {
+        if (s['id'] == signer.id) {
+          allSignersCreated[i] = true;
+        }
+      });
       i++;
     });
 
@@ -330,8 +338,8 @@ void main() {
     );
 
     expect(
-      true,
-      allSignersCreated,
+      false,
+      allSignersCreated.contains(false),
       reason: "All specified signers must be created",
     );
 

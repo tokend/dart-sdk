@@ -46,6 +46,7 @@ class WalletEncryption {
         jsonStart + primarySeed + jsonMiddle + seedsBuffer + jsonEnd;
 
     var jsonBytes = Uint8List.fromList(utf8.encode(jsonBuffer));
+    jsonBuffer = jsonBuffer.erase();
 
     var encrypted = Aes256GCM(iv).encrypt(jsonBytes, walletEncryptionKey);
     jsonBytes.erase();
@@ -74,10 +75,12 @@ class WalletEncryption {
 
     var seedJsonBytes = Aes256GCM(iv).decrypt(cipherText, walletEncryptionKey);
     var seedJsonCharBuffer = utf8.decode(seedJsonBytes);
+    seedJsonBytes.erase();
 
     var arrayParser = KeychainDataSeedsArrayReader()..run(seedJsonCharBuffer);
     var singleParser = KeychainDataSingleSeedReader()..run(seedJsonCharBuffer);
 
+    seedJsonCharBuffer.erase();
     if (arrayParser.reedSeeds.isNotEmpty)
       return arrayParser.reedSeeds;
     else if (singleParser.reedSeed != null) {
@@ -144,8 +147,9 @@ class WalletEncryption {
     var encryptedSeedsKeychainData =
         encryptSecretSeeds(seeds, iv, walletEncryptionKey);
 
-    //TODO find out a way to erase seeds
-
+    seeds.forEach((seed) {
+      seed.erase();
+    });
     return EncryptedWalletAccount.get(mainAccount.accountId, email,
         keyDerivationSalt, encryptedSeedsKeychainData);
   }

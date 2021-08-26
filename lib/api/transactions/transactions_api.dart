@@ -56,17 +56,18 @@ class TransactionsApi {
   Future<SubmitTransactionResponse?> submit(
       String envelopeBase64, bool waitForIngest) async {
     try {
-      var response = await _service.post("v3/transactions",
-          body: {'tx': envelopeBase64, 'wait_for_ingest': waitForIngest});
+      var responseAttributes = (await _service.post("v3/transactions", body: {
+        'tx': envelopeBase64,
+        'wait_for_ingest': waitForIngest
+      }))['data']['attributes'];
       return SubmitTransactionResponse(
           null,
-          response['data']['ledger_sequence'],
-          response['data']['created_at'],
-          response['data']['hash'],
-          response['data']['envelope_xdr'],
-          response['data']['result_xdr'],
-          response['data']['result_meta_xdr']
-      );
+          responseAttributes['ledger_sequence'],
+          responseAttributes['created_at'],
+          responseAttributes['hash'],
+          responseAttributes['envelope_xdr'],
+          responseAttributes['result_xdr'],
+          responseAttributes['result_meta_xdr']);
     } on DioError catch (e) {
       switch (e.response?.statusCode) {
         case 400:

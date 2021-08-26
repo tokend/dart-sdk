@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dio/dio.dart';
-import 'package:japx/japx.dart';
 
 /// Allows to make custom HTTP requests with response body mapping.
 ///
@@ -23,13 +22,16 @@ class CustomRequestsApi {
   Future<Map<String, dynamic>> get(String url,
       {Map<String, dynamic>? query, Map<String, dynamic>? headers}) async {
     Response response = await doGet(url, query, headers);
-    return jsonDecode(response.data);
-    //return Japx.decode(jsonDecode(response.data));
+    if (response.data != null && response.data.toString().length > 0) {
+      return jsonDecode(response.data);
+    } else {
+      return {};
+    }
   }
 
-// end region
+// endregion
 
-//region POST
+  //region POST
   Future<Response> _doPost(String url, Map<String, dynamic>? query,
       dynamic body, Map<String, dynamic>? headers) {
     return _customRequestService.post(
@@ -41,13 +43,16 @@ class CustomRequestsApi {
       dynamic body,
       Map<String, dynamic>? headers}) async {
     Response response = await _doPost(url, query, body, headers);
-    Map<String, dynamic> result = {};
-    return json.decode(response.data);
+    if (response.data != null && response.data.toString().length > 0) {
+      return json.decode(response.data);
+    } else {
+      return {};
+    }
   }
 
-//end region
+//endregion
 
-//region PUT
+  //region PUT
   Future<Response> _doPut(String url, Map<String, dynamic>? query, dynamic body,
       Map<String, dynamic>? headers) {
     return _customRequestService.put(
@@ -59,15 +64,15 @@ class CustomRequestsApi {
       dynamic body,
       Map<String, dynamic>? headers}) async {
     Response response = await _doPut(url, query, body, headers);
-    if (response.data!= null && response.data.toString().length > 0)
-      return Japx.decode(jsonDecode(response.data));
+    if (response.data != null && response.data.toString().length > 0)
+      return jsonDecode(response.data);
     else
       return {};
   }
 
-//end region
+//endregion
 
-//region PATCH
+  //region PATCH
   Future<Response> _doPatch(String url, Map<String, dynamic>? query,
       dynamic body, Map<String, dynamic>? headers) {
     return _customRequestService.patch(
@@ -79,12 +84,16 @@ class CustomRequestsApi {
       dynamic body,
       Map<String, dynamic>? headers}) async {
     Response response = await _doPatch(url, query, body, headers);
-    return Japx.decode(jsonDecode(response.data));
+    if (response.data != null && response.data.toString().length > 0) {
+      return jsonDecode(response.data);
+    } else {
+      return {};
+    }
   }
 
-//end region
+//endregion
 
-//region DELETE
+  //region DELETE
   Future<Response> _doDelete(
       String url, Map<String, dynamic>? query, Map<String, dynamic>? headers) {
     return _customRequestService.delete(_dio, url, query ?? {}, headers ?? {});
@@ -93,8 +102,12 @@ class CustomRequestsApi {
   Future<Map<String, dynamic>> delete(String url,
       {Map<String, dynamic>? query, Map<String, dynamic>? headers}) async {
     Response response = await _doDelete(url, query, headers);
-    return Japx.decode(jsonDecode(response.data));
+    if (response.data != null && response.data.toString().length > 0) {
+      return jsonDecode(response.data);
+    } else {
+      return {};
+    }
   }
-//end region
+//endregion
 
 }
