@@ -46,6 +46,7 @@ class WalletEncryption {
         jsonStart + primarySeed + jsonMiddle + seedsBuffer + jsonEnd;
 
     var jsonBytes = Uint8List.fromList(utf8.encode(jsonBuffer));
+    jsonBuffer = jsonBuffer.erase();
 
     var encrypted = Aes256GCM(iv).encrypt(jsonBytes, walletEncryptionKey);
     jsonBytes.erase();
@@ -74,10 +75,12 @@ class WalletEncryption {
 
     var seedJsonBytes = Aes256GCM(iv).decrypt(cipherText, walletEncryptionKey);
     var seedJsonCharBuffer = utf8.decode(seedJsonBytes);
+    seedJsonBytes.erase();
 
     var arrayParser = KeychainDataSeedsArrayReader()..run(seedJsonCharBuffer);
     var singleParser = KeychainDataSingleSeedReader()..run(seedJsonCharBuffer);
 
+    seedJsonCharBuffer.erase();
     if (arrayParser.reedSeeds.isNotEmpty)
       return arrayParser.reedSeeds;
     else if (singleParser.reedSeed != null) {
@@ -105,7 +108,7 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  EncryptedWalletAccount encryptAccount(String email, Account account,
+  static EncryptedWalletAccount encryptAccount(String email, Account account,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
     return encryptAccounts(
         email, List.of([account]), walletEncryptionKey, keyDerivationSalt);
@@ -120,7 +123,7 @@ class WalletEncryption {
   ///
   /// See [WalletKeyDerivation.deriveWalletEncryptionKey]
   /// See [Aes256GCM]
-  encryptAccounts(String email, List<Account> accounts,
+  static encryptAccounts(String email, List<Account> accounts,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
     var sourceRandom = SecureRandom();
     String s = sourceRandom.nextString(length: IV_LENGTH);
@@ -144,8 +147,9 @@ class WalletEncryption {
     var encryptedSeedsKeychainData =
         encryptSecretSeeds(seeds, iv, walletEncryptionKey);
 
-    //TODO find out a way to erase seeds
-
+    seeds.forEach((seed) {
+      seed.erase();
+    });
     return EncryptedWalletAccount.get(mainAccount.accountId, email,
         keyDerivationSalt, encryptedSeedsKeychainData);
   }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:dart_sdk/key_server/models/encrypted_wallet_account.dart';
 import 'package:dart_sdk/key_server/models/signer_data.dart';
 import 'package:dart_wallet/transaction.dart';
@@ -11,6 +9,19 @@ class WalletRelation {
 
   WalletRelation(this.id, this.type, this.attributes);
 
+  Map<dynamic, dynamic> toJson() => {
+        'id': id,
+        'type': type,
+        'attributes': getAttributes(attributes),
+      };
+
+  Map<dynamic, dynamic> getAttributes(dynamic attributes) {
+    if (attributes is Map<String, String>)
+      return attributes;
+    else
+      return attributes?.toJson();
+  }
+
   WalletRelation.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         type = json['type'],
@@ -20,13 +31,13 @@ class WalletRelation {
     return WalletRelation('password_id', 'password', encryptedPasswordAccount);
   }
 
-  static kdf(Int64 kdfVersion) {
+  static kdf(int kdfVersion) {
     return WalletRelation(kdfVersion.toString(), 'kdf', null);
   }
 
   static transaction(Transaction transaction) {
     return WalletRelation('tx_id', 'transaction',
-        Map.fromEntries([MapEntry('envelope', transaction.getEnvelope())]));
+        {'envelope': transaction.getEnvelope().toBase64()});
   }
 
   static signer(SignerData signerData) {

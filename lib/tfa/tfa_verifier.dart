@@ -6,21 +6,18 @@ import 'package:japx/japx.dart';
 
 /// Performs OTP verification.
 class TfaVerifier {
-  late final TfaVerificationService service;
-  late final String _walletId;
-  late final int _factorId;
-  late final String _token;
+  final TfaVerificationService service;
+  final String _walletId;
+  final int _factorId;
+  final String _token;
 
-  late InterfaceImpl verifierInterface;
+  InterfaceImpl get verifierInterface => InterfaceImpl(this);
 
-  TfaVerifier.get(this.service, this._walletId, this._factorId, this._token) {
-    this.verifierInterface = InterfaceImpl(this);
-  }
-
-  TfaVerifier(TfaVerificationService service, NeedTfaException tfaException) {
-    TfaVerifier.get(service, tfaException.walletId, tfaException.factorId,
-        tfaException.token);
-  }
+  TfaVerifier(TfaVerificationService service, NeedTfaException tfaException)
+      : this.service = service,
+        this._walletId = tfaException.walletId,
+        this._factorId = tfaException.factorId,
+        this._token = tfaException.token;
 
   EmptyCallback? onVerifiedCallback;
   EmptyCallback? onVerificationCancelledCallback;
@@ -35,10 +32,10 @@ class TfaVerifier {
     return this;
   }
 
-  void verify(String otp,
-      {EmptyCallback? onSuccess, OptionalThrowableCallback? onError}) {
-    final data = Japx.encode(VerifyTfaRequestBody(_token, otp)..toJson());
-    service
+  Future<void> verify(String otp,
+      {EmptyCallback? onSuccess, OptionalThrowableCallback? onError}) async {
+    final data = Japx.encode(VerifyTfaRequestBody(_token, otp).toJson());
+    await service
         .verifyTfaFactor(data, _walletId, _factorId)
         .then((value) => value.statusCode)
         .catchError((error, stacktrace) {
@@ -51,7 +48,7 @@ class TfaVerifier {
 abstract class Interface {
   /// Performs OTP verification.
   /// If OTP was verified successfully original request will be completed.
-  void verify(String otp,
+  verify(String otp,
       {EmptyCallback? onSuccess, OptionalThrowableCallback? onError});
 
   /// Informs verifier that verification will not be performed.
@@ -67,12 +64,12 @@ class InterfaceImpl implements Interface {
   /// Performs OTP verification.
   /// If OTP was verified successfully original request will be completed.
   @override
-  void verify(String otp,
-      {EmptyCallback? onSuccess, OptionalThrowableCallback? onError}) {
-    _tfaVerifier.verify(otp,
-        onSuccess: () =>
-            {_tfaVerifier.onVerifiedCallback?.call(), onSuccess?.call()},
-        onError: onError);
+  Future<void> verify(String otp,
+      {EmptyCallback? onSuccess, OptionalThrowableCallback? onError}) async {
+    await _tfaVerifier.verify(otp, onSuccess: () {
+      _tfaVerifier.onVerifiedCallback?.call();
+      onSuccess?.call();
+    }, onError: onError);
   }
 
   /// Informs verifier that verification will not be performed.

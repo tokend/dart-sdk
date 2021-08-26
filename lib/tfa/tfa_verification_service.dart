@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 
 class TfaVerificationService {
-  Dio _dio;
+  Dio dio;
 
-  TfaVerificationService(this._dio);
+  TfaVerificationService(this.dio);
 
   Future<Response> verifyTfaFactor(dynamic body, String walletId, int id) {
-    return _dio.put("wallets/$walletId/factors/$id/verification", data: body);
+    return dio.put("wallets/$walletId/factors/$id/verification", data: body);
   }
 }

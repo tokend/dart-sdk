@@ -1,4 +1,4 @@
-import 'owner_data_entity.dart';
+import 'package:dart_sdk/api/base/model/data_entity.dart';
 
 class DocumentUploadRequest {
   String type;
@@ -32,11 +32,11 @@ class DocumentUploadRequestAttributes {
 class DocumentUploadRequestRelationships {
   late String ownerAccountId;
 
-  late OwnerDataEntity owner;
+  late DataEntity owner;
 
   DocumentUploadRequestRelationships(String ownerAccountId) {
     this.ownerAccountId = ownerAccountId;
-    this.owner = OwnerDataEntity(Owner(ownerAccountId));
+    this.owner = DataEntity(Owner(ownerAccountId));
   }
 
   Map<String, dynamic> toJson() => {'owner': owner.toJson()};

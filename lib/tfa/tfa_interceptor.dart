@@ -14,27 +14,37 @@ class TfaInterceptor extends Interceptor {
   TfaInterceptor(this._verificationService, this._tfaCallback);
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    response.data.toString();
-    if (response.statusCode == HttpStatus.forbidden) {
-      var exception = extractTfaException(response);
+  Future<void> onError(DioError error, ErrorInterceptorHandler handler) async {
+    if (error.response?.statusCode == HttpStatus.forbidden) {
+      var exception = _extractTfaException(error.response!);
       if (exception != null && _tfaCallback != null) {
-        var verifier = TfaVerifier(_verificationService, exception)
-            .onVerified(() {})
-            .onVerificationCancelled(() {
+        var verifier = TfaVerifier(
+                TfaVerificationService(_verificationService.dio), exception)
+            .onVerified(() async {
+          RequestOptions requestOptions = error.requestOptions;
+          handler.resolve(await _verificationService.dio.request(
+              requestOptions.path,
+              data: requestOptions.data,
+              queryParameters: requestOptions.queryParameters,
+              options: _getOptions(requestOptions)));
+        }).onVerificationCancelled(() {
           throw Exception(
               'Request was interrupted due to the cancelled TFA verification');
         });
 
-        _tfaCallback?.onTfaRequired(
-            exception, verifier.verifierInterface); //TODO
-
+        _tfaCallback?.onTfaRequired(exception, verifier.verifierInterface);
       }
     }
-    super.onResponse(response, handler);
   }
 
-  NeedTfaException? extractTfaException(Response response) {
+  Options _getOptions(RequestOptions requestOptions) {
+    return Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+  }
+
+  NeedTfaException? _extractTfaException(Response response) {
     var error;
     try {
       var responseString = response.data.toString();

@@ -51,7 +51,6 @@ class PagingParamsWithNamedCursors implements QueryParams {
 
     var results = CURSORS_REGEX.allMatches(url);
     for (RegExpMatch result in results) {
-      print(result.groupCount);
       if (result.groupCount >= 2) {
         if (result[1] != null && result[2] != null) {
           return {result[1]!: result[2]!};

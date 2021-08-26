@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 class LoginParams {
@@ -12,6 +13,18 @@ class LoginParams {
       : type = json['type'],
         id = int.parse(json['id']),
         kdfAttributes = KdfAttributes.fromJson(json['attributes']);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoginParams &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          id == other.id &&
+          kdfAttributes == other.kdfAttributes;
+
+  @override
+  int get hashCode => type.hashCode ^ id.hashCode ^ kdfAttributes.hashCode;
 }
 
 class KdfAttributes {
@@ -25,6 +38,15 @@ class KdfAttributes {
   KdfAttributes(
       this.algorithm, this.bits, this.n, this.p, this.r, this.encodedSalt);
 
+  Map<String, dynamic> toJson() => {
+        'algorithm': algorithm,
+        'bits': bits,
+        'n': n,
+        'p': p,
+        'r': r,
+        'salt': salt
+      };
+
   KdfAttributes.fromJson(Map<String, dynamic> json)
       : algorithm = json['algorithm'],
         bits = json['bits'],
@@ -35,9 +57,30 @@ class KdfAttributes {
 
   Uint8List? get salt => encodedSalt?.decodeBase64();
 
-  set setSalt(Uint8List value) {
-    encodedSalt = value.encodeBase64String();
+  set setSalt(Uint8List? value) {
+    encodedSalt = value?.encodeBase64String();
   }
 
   int get bytes => bits ~/ 8;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is KdfAttributes &&
+          runtimeType == other.runtimeType &&
+          algorithm == other.algorithm &&
+          bits == other.bits &&
+          n == other.n &&
+          p == other.p &&
+          r == other.r &&
+          encodedSalt == other.encodedSalt;
+
+  @override
+  int get hashCode =>
+      algorithm.hashCode ^
+      bits.hashCode ^
+      n.hashCode ^
+      p.hashCode ^
+      r.hashCode ^
+      encodedSalt.hashCode;
 }

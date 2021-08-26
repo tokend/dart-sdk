@@ -9,18 +9,33 @@ import 'package:dart_sdk/utils/extensions/encoding.dart';
 
 class WalletData {
   String type;
-  String id;
+  String? id;
   WalletDataAttributes attributes;
-  var relationships = Map<String, dynamic>.fromEntries([]);
+  var relationships = {};
 
   static const TYPE_DEFAULT = "wallet";
   static const TYPE_RECOVERY = "recovery-wallet";
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type,
+        'attributes': attributes.toJson(),
+        'relationships': getRelationships(relationships)
+      };
+
+  Map<dynamic, dynamic> getRelationships(Map<dynamic, dynamic> map) {
+    var res = {};
+    map.forEach((key, value) {
+      return res[key] = value.toJson();
+    });
+
+    return res;
+  }
+
   WalletData.fromJson(Map<String, dynamic> json)
       : type = json['type'],
         id = json['id'],
-        attributes =
-            WalletDataAttributes.fromJson((json['attributes'])),
+        attributes = WalletDataAttributes.fromJson((json['attributes'])),
         relationships = (json['relationships']);
 
   WalletData(this.type, this.id, this.attributes);
@@ -33,8 +48,8 @@ class WalletData {
         this.attributes = WalletDataAttributes(
             encryptedAccount.accountId,
             encryptedAccount.email,
-            encryptedAccount.encodedSalt,
             encryptedAccount.encodedKeychainData,
+            encryptedAccount.encodedSalt,
             false,
             verificationCode);
 
@@ -43,18 +58,21 @@ class WalletData {
   }
 
   addArrayRelation(String name, Iterable<WalletRelation> relations) {
-    relationships[name] = DataEntity(relations);
+    relationships[name] = DataEntity(relations.toList());
   }
 
   List<WalletRelation> getFlattenRelationships() {
-    return relationships.values.expand((relation) {
+    var res = relationships.values.expand((relation) {
       var data = relation.data;
       if (data is Iterable) {
-        return data.map((e) => {e as WalletRelation});
+        return data.map((e) {
+          return e as WalletRelation;
+        });
       } else {
         return List.of([data as WalletRelation]);
       }
-    }) as List<WalletRelation>;
+    });
+    return res.toList();
   }
 }
 
@@ -68,6 +86,15 @@ class WalletDataAttributes {
 
   WalletDataAttributes(this.accountId, this.email, this.encodedKeychainData,
       this.salt, this.isVerified, this.verificationCode);
+
+  Map<String, dynamic> toJson() => {
+        'account_id': accountId,
+        'email': email,
+        'keychain_data': encodedKeychainData,
+        'salt': salt,
+        'verified': isVerified,
+        'verification_code': verificationCode,
+      };
 
   WalletDataAttributes.fromJson(Map<String, dynamic> json)
       : accountId = json['account_id'],

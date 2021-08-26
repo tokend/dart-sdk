@@ -1,7 +1,9 @@
+import 'package:dart_sdk/api/base/model/error_body.dart';
 import 'package:dart_sdk/api/custom/custom_requests_api.dart';
 import 'package:dart_sdk/api/custom/custom_requests_service.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_sdk/signing/sign_interceptor.dart';
+import 'package:dart_sdk/tfa/exceptions.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
 import 'package:dart_sdk/tfa/tfa_interceptor.dart';
 import 'package:dart_sdk/tfa/tfa_verification_service.dart';
@@ -19,13 +21,6 @@ class ServiceFactory {
   static const _ACCEPT_CONTENT_TYPE = "application/vnd.api+json";
   static const _CONTENT_TYPE = "application/json";
 
-  TfaVerificationService getTfaVerificationService() {
-    var options =
-        BaseOptions(baseUrl: _url, headers: _getDefaultHeaders(_extraHeaders));
-    Dio _dio = Dio(options);
-    return TfaVerificationService(_dio);
-  }
-
   CustomRequestsApi getService(
       {RequestSigner? requestSigner, TfaCallback? tfaCallback}) {
     var options =
@@ -41,7 +36,7 @@ class ServiceFactory {
     }
     if (tfaCallback != null) {
       _dio.interceptors
-          .add(TfaInterceptor(getTfaVerificationService(), tfaCallback));
+          .add(TfaInterceptor(TfaVerificationService(_dio), tfaCallback));
     }
     return new CustomRequestsApi(CustomRequestService(), _dio);
   }
@@ -55,6 +50,26 @@ class ServiceFactory {
       defaultMap.addAll(filterNotNullValues(extraHeaders));
     }
     return defaultMap;
+  }
+
+  NeedTfaException? extractTfaException(Response response) {
+    var error;
+    try {
+      var responseString = response.data.toString();
+      error = ErrorBody.fromJsonString(responseString).firstOrNull;
+    } catch (e) {
+      error = null;
+    }
+
+    if (error == null) return null;
+    var result;
+    try {
+      result = NeedTfaException.fromError(error);
+    } catch (e) {
+      result = null;
+    }
+
+    return result;
   }
 
   Map<String, String> filterNotNullValues(Map<String, String?> map) {
