@@ -26,7 +26,7 @@ class WalletData {
   Map<dynamic, dynamic> getRelationships(Map<dynamic, dynamic> map) {
     var res = {};
     map.forEach((key, value) {
-      return res[key] = value.toJson();
+      return res[key] = value?.toJson();
     });
 
     return res;
@@ -80,7 +80,7 @@ class WalletDataAttributes {
   String accountId;
   String email;
   String encodedKeychainData;
-  String salt;
+  String? salt;
   bool isVerified;
   String? verificationCode;
 
