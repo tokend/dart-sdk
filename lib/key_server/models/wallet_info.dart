@@ -15,9 +15,18 @@ class WalletInfo {
       : accountId = json['accountId'],
         email = json['email'],
         walletIdHex = json['walletIdHex'],
-        loginParams = json['loginParams'],
+        loginParams = LoginParams.fromJson(json['loginParams']),
         _secretSeeds = json['secretSeeds'],
         legacySingleSecretSeed = json['secretSeed'];
+
+  Map<String, dynamic> toJson(WalletInfo data) => {
+        'accountId': data.accountId,
+        'email': data.email,
+        'walletIdHex': data.walletIdHex,
+        'loginParams': data.loginParams.toJson(),
+        'secretSeeds': data.secretSeeds,
+        'secretSeed': data.legacySingleSecretSeed
+      };
 
   List<String> get secretSeeds {
     var legacySeed;

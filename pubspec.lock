@@ -384,10 +384,10 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "2dcd269c2852ed53de369d55423fb2febb1b865d"
+      resolved-ref: "7d93d3622db6f85041ace5eb1fca1a4aa698a766"
       url: "https://github.com/bcgit/pc-dart.git"
     source: git
-    version: "3.3.1"
+    version: "3.3.2"
   pool:
     dependency: transitive
     description:

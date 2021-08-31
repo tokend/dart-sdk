@@ -14,6 +14,9 @@ class LoginParams {
         id = int.parse(json['id']),
         kdfAttributes = KdfAttributes.fromJson(json['attributes']);
 
+  Map<String, dynamic> toJson() =>
+      {'type': type, 'id': id, 'attributes': kdfAttributes.toJson()};
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
