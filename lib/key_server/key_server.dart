@@ -254,15 +254,12 @@ class KeyServer {
 
     await updateWallet(walletInfo.walletIdHex, newWallet.walletData);
 
-    return WalletInfo(
-        walletInfo.accountId,
-        walletInfo.email,
-        newWallet.walletData.id!,
-        newLoginParams,
-        newAccounts
-            .map((account) => account.secretSeed)
-            .where((seed) => seed != null)
-            .toList() as List<String>);
+    var seeds = <String>[];
+    newAccounts.map((account) => account.secretSeed).forEach((seed) {
+      if (seed != null) seeds.add(seed);
+    });
+    return WalletInfo(walletInfo.accountId, walletInfo.email,
+        newWallet.walletData.id!, newLoginParams, seeds);
   }
 
   //endregion
@@ -422,12 +419,16 @@ class KeyServer {
       return null;
     });
 
+    var signers = <OperationBodyManageSigner>[];
+    removeSignersButNoCurrent.forEach((signer) {
+      if (signer != null) {
+        signers.add(signer);
+      }
+    });
     var trBuilder =
         TransactionBuilder.FromPubKey(networkParams, originalAccountId)
             .addSigner(currentAccount)
-            .addOperations(removeSignersButNoCurrent
-                .where((signer) => signer != null)
-                .toList() as List<OperationBodyManageSigner>)
+            .addOperations(signers)
             .addOperations(signersToAdd.map((signerToAdd) {
       return OperationBodyManageSigner(ManageSignerOp(
           ManageSignerOpDataCreate(

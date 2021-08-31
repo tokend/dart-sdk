@@ -15,7 +15,7 @@ class WalletRelation {
         'attributes': getAttributes(attributes),
       };
 
-  Map<dynamic, dynamic> getAttributes(dynamic attributes) {
+  Map<dynamic, dynamic>? getAttributes(dynamic attributes) {
     if (attributes is Map<String, String>)
       return attributes;
     else

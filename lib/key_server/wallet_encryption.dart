@@ -7,8 +7,8 @@ import 'package:dart_sdk/key_server/seedreader/keychain_data_seeds_array_reader.
 import 'package:dart_sdk/key_server/seedreader/keychain_data_single_seed_reader.dart';
 import 'package:dart_wallet/account.dart';
 import 'package:dart_wallet/extensions/erase_extensions.dart';
+import 'package:dart_wallet/utils/random.dart';
 import 'package:dart_wallet/xdr/utils/dependencies.dart';
-import 'package:secure_random/secure_random.dart';
 
 class WalletEncryption {
   static const IV_LENGTH = 12;
@@ -125,9 +125,7 @@ class WalletEncryption {
   /// See [Aes256GCM]
   static encryptAccounts(String email, List<Account> accounts,
       Uint8List walletEncryptionKey, Uint8List keyDerivationSalt) {
-    var sourceRandom = SecureRandom();
-    String s = sourceRandom.nextString(length: IV_LENGTH);
-    var iv = Uint8List.fromList(s.codeUnits);
+    var iv = Uint8List.fromList(Randomizer.getRandomString(IV_LENGTH).codeUnits);
 
     var seeds = accounts.map((account) {
       if (account.secretSeed == null) {
