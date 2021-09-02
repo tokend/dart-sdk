@@ -109,6 +109,18 @@ class KeyServer {
         List.of([SignerData(rootAccount.accountId, defaultSignerRole)]));
   }
 
+  Future<WalletCreateResult> createAndSaveWalletWithDefaultSignerRole(
+      String email,
+      String password,
+      int defaultSignerRole,
+      Account rootAccount) {
+    return _getCreateAndSaveWalletResult(
+        email,
+        password,
+        List.of([rootAccount]),
+        List.of([SignerData(rootAccount.accountId, defaultSignerRole)]));
+  }
+
   /// Loads default login params, loads default signer role,
   /// creates a wallet with single signer and submits it to the system.
   Future<WalletCreateResult> createAndSaveWalletWithSigners(String email,
