@@ -174,7 +174,7 @@ packages:
     description:
       path: "."
       ref: dev
-      resolved-ref: "0d10cc7f09172b9f71566cd6dae9f3cbbe0d9335"
+      resolved-ref: "1bb1e43057aa83b88175370b1e0d57c257c0b204"
       url: "https://github.com/tokend/dart-crypto-kit"
     source: git
     version: "0.0.1"
@@ -375,11 +375,9 @@ packages:
   pointycastle:
     dependency: transitive
     description:
-      path: "."
-      ref: master
-      resolved-ref: "7d93d3622db6f85041ace5eb1fca1a4aa698a766"
-      url: "https://github.com/bcgit/pc-dart.git"
-    source: git
+      name: pointycastle
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "3.3.2"
   pool:
     dependency: transitive

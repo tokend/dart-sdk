@@ -5,7 +5,7 @@ class WalletInfo {
   String email;
   String walletIdHex;
   LoginParams loginParams;
-  List<String>? _secretSeeds;
+  List<dynamic>? _secretSeeds;
   String? legacySingleSecretSeed;
 
   WalletInfo(this.accountId, this.email, this.walletIdHex, this.loginParams,
@@ -24,11 +24,11 @@ class WalletInfo {
         'email': email,
         'walletIdHex': walletIdHex,
         'loginParams': loginParams.toJson(),
-        'secretSeeds': secretSeeds,
+        'secretSeeds': _secretSeeds,
         'secretSeed': legacySingleSecretSeed
       };
 
-  List<String> get secretSeeds {
+  List<dynamic> get secretSeeds {
     var legacySeed;
     if (legacySingleSecretSeed != null) {
       legacySeed = List.of([legacySingleSecretSeed]);

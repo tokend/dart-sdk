@@ -11,7 +11,7 @@ class LoginParams {
 
   LoginParams.fromJson(Map<String, dynamic> json)
       : type = json['type'],
-        id = int.parse(json['id']),
+        id = int.parse(json['id'].toString()),
         kdfAttributes = KdfAttributes.fromJson(json['attributes']);
 
   Map<String, dynamic> toJson() =>
@@ -47,7 +47,7 @@ class KdfAttributes {
         'n': n,
         'p': p,
         'r': r,
-        'salt': salt
+        'salt': encodedSalt
       };
 
   KdfAttributes.fromJson(Map<String, dynamic> json)
@@ -55,8 +55,17 @@ class KdfAttributes {
         bits = json['bits'],
         n = json['n'],
         p = json['p'],
-        r = json['r'],
-        encodedSalt = json['salt'];
+        r = json['r'] {
+    encodedSalt = getSalt(json['salt']);
+  }
+
+  String getSalt(dynamic json) {
+    if (json is String) {
+      return json;
+    } else {
+      return String.fromCharCodes(json.cast<int>());
+    }
+  }
 
   Uint8List? get salt => encodedSalt?.decodeBase64();
 
