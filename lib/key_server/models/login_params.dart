@@ -59,7 +59,8 @@ class KdfAttributes {
     encodedSalt = getSalt(json['salt']);
   }
 
-  String getSalt(dynamic json) {
+  String? getSalt(dynamic json) {
+    if (json == null) return null;
     if (json is String) {
       return json;
     } else {
