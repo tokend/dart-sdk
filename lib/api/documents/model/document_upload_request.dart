@@ -47,5 +47,7 @@ class Owner {
 
   Owner(this.id);
 
+  Owner.fromJson(Map<String, dynamic> json) : id = json['id'];
+
   Map<String, dynamic> toJson() => {'id': id};
 }
