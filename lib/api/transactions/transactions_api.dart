@@ -55,27 +55,27 @@ class TransactionsApi {
   /// Submits given transaction envelope
   Future<SubmitTransactionResponse?> submit(
       String envelopeBase64, bool waitForIngest) async {
-    try {
-      var responseAttributes = (await _service.post("v3/transactions", body: {
-        'tx': envelopeBase64,
-        'wait_for_ingest': waitForIngest
-      }))['data']['attributes'];
-      return SubmitTransactionResponse(
-          null,
-          responseAttributes['ledger_sequence'],
-          responseAttributes['created_at'],
-          responseAttributes['hash'],
-          responseAttributes['envelope_xdr'],
-          responseAttributes['result_xdr'],
-          responseAttributes['result_meta_xdr']);
-    } on DioError catch (e) {
-      switch (e.response?.statusCode) {
+    var responseAttributes = (await _service.post("v3/transactions", body: {
+      'tx': envelopeBase64,
+      'wait_for_ingest': waitForIngest
+    }).onError((error, stackTrace) {
+      switch ((error as DioError).response?.statusCode) {
         case 400:
-          var exception = _getResponseFromHttpException(e.response);
-          throw exception != null ? TransactionFailedException(exception) : e;
+          var exception = _getResponseFromHttpException(error.response);
+          throw exception != null
+              ? TransactionFailedException(exception)
+              : error;
         default:
-          throw e;
+          throw error;
       }
-    }
+    }))['data']['attributes'];
+    return SubmitTransactionResponse(
+        null,
+        responseAttributes['ledger_sequence'],
+        responseAttributes['created_at'],
+        responseAttributes['hash'],
+        responseAttributes['envelope_xdr'],
+        responseAttributes['result_xdr'],
+        responseAttributes['result_meta_xdr']);
   }
 }
