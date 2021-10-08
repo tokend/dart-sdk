@@ -17,6 +17,9 @@ class RemoteFile {
         name = json['name'],
         mimeType = json['mime_type'];
 
+  Map<String, dynamic> toJson() =>
+      {'key': key, 'name': name, 'mime_type': mimeType};
+
   String getUrl(String storageRoot) {
     var delimiter = '/';
     if (storageRoot[storageRoot.length - 1] == '/') {
