@@ -14,7 +14,7 @@ class TfaInterceptor extends Interceptor {
   TfaInterceptor(this._verificationService, this._tfaCallback);
 
   @override
-  Future<void> onError(DioError error, ErrorInterceptorHandler handler) async {
+  Future onError(DioError error, ErrorInterceptorHandler handler) async {
     if (error.response?.statusCode == HttpStatus.forbidden) {
       var exception = _extractTfaException(error.response!);
       if (exception != null && _tfaCallback != null) {
@@ -33,7 +33,11 @@ class TfaInterceptor extends Interceptor {
         });
 
         _tfaCallback?.onTfaRequired(exception, verifier.verifierInterface);
+      } else {
+        return handler.next(error);
       }
+    } else {
+      return handler.next(error);
     }
   }
 
