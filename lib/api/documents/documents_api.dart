@@ -56,7 +56,7 @@ class DocumentsApi {
 
     var filePart = FormData.fromMap(formData);
     return uploadFileMultipart(policy['data'], filePart).then((_) =>
-        RemoteFile(policy['data'][REMOTE_FILE_KEY], fileName, contentType));
+        RemoteFile(policy['data']['attributes'][REMOTE_FILE_KEY], fileName, contentType));
   }
 
   Future<void> uploadFileMultipart(
