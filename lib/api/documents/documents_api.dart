@@ -59,8 +59,7 @@ class DocumentsApi {
         RemoteFile(policy['data']['attributes'][REMOTE_FILE_KEY], fileName, contentType));
   }
 
-  Future<void> uploadFileMultipart(
-      DocumentUploadPolicy policy, FormData data) async {
+  Future<void> uploadFileMultipart(DocumentUploadPolicy policy, FormData data) {
     var uploadUrl = policy['attributes'][POLICY_URL_KEY] ?? "";
     return _upload(uploadUrl, data);
   }
