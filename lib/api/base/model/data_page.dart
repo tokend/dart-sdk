@@ -25,10 +25,7 @@ class DataPage<T> {
   }
 
   static String? getNumberParamFromLink(String link, String param) {
-    var groupCount = RegExp('{$param}=(\\d+)').firstMatch(link)?.groupCount;
-    if (groupCount != null) {
-      return RegExp(r'$param=(\\d+)').firstMatch(link)!.group(groupCount);
-    }
+    return RegExp('$param=(\\d+)', multiLine: true).firstMatch(link)?.group(1);
   }
 
   static bool isLastPage<T>(Page<T> page) {

@@ -27,7 +27,7 @@ class PageQueryParams extends JsonApiQueryParams.JsonApiQueryParams
 
   @override
   Map<String, dynamic> map() {
-    final Map<String, dynamic> map = {};
+    final Map<String, dynamic> map = super.map();
     if (pagingParams != null) {
       map.addAll(pagingParams!.map());
     }

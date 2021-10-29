@@ -1,5 +1,6 @@
 import 'package:dart_sdk/api/base/params/paging_order.dart';
 import 'package:dart_sdk/api/base/params/paging_params.dart';
+import 'package:flutter/foundation.dart';
 
 /// Backward-compatible pagination params for API V2.
 class PagingParamsV2 extends PagingParams {
@@ -19,12 +20,12 @@ class PagingParamsV2 extends PagingParams {
   Map<String, dynamic> map() {
     Map<String, dynamic> map = {};
     if (order != null) {
-      map.addAll({QUERY_PARAM_ORDER: order});
+      map.addAll({QUERY_PARAM_ORDER: describeEnum(order!).toLowerCase()});
     }
     if (limit != null) {
       map.addAll({QUERY_PARAM_LIMIT: limit});
     }
-    if (cursor != null) {
+    if (cursor != null && cursor != 'null') {
       map.addAll({
         "page": cursor,
         QUERY_PARAM_PAGE_NUMBER: cursor,
