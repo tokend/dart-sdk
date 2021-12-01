@@ -1,5 +1,6 @@
 import 'package:dart_sdk/api/base/base_api.dart';
 import 'package:dart_sdk/api/v3/keyvalue/key_value_storage_api_v3.dart';
+import 'package:dart_sdk/api/v3/requests/requests_api.dart';
 import 'package:dart_sdk/api/v3/signers/signers_api_v3.dart';
 import 'package:dart_sdk/signing/request_signer.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
@@ -19,6 +20,8 @@ class TokenDApiV3 extends BaseApi {
       : super(rootUrl, requestSigner, tfaCallback, extraHeaders, withLogs);
 
   KeyValueStorageApiV3 get keyValue => KeyValueStorageApiV3(getService());
+
   SignersApiV3 get signers => SignersApiV3(getService());
 
+  RequestsApiV3 get requests => RequestsApiV3(getService());
 }
