@@ -25,7 +25,9 @@ class DataPage<T> {
   }
 
   static String? getNumberParamFromLink(String link, String param) {
-    return RegExp('$param=(\\d+)', multiLine: true).firstMatch(link)?.group(1);
+    return RegExp('${param}=(\\d+)', multiLine: true)
+        .firstMatch(link)
+        ?.group(1);
   }
 
   static bool isLastPage<T>(Page<T> page) {
@@ -75,5 +77,26 @@ class DataPage<T> {
     var isLast = nextLink == null || items.length < limit;
 
     return DataPage(next, items, isLast);
+  }
+
+  static String getNextLink(Map<String, dynamic> response) {
+    return Uri.decodeFull(response['links']['next']);
+  }
+
+  static int getLimit(Map<String, dynamic> response, String nextLink) {
+    return int.parse(
+        DataPage.getNumberParamFromLink(nextLink, 'page\\[limit\\]') ?? "0");
+  }
+
+  static bool isLastOne(
+      Map<String, dynamic> response, int limit, int itemsLength) {
+    return response['links']['next'] == null || itemsLength < limit;
+  }
+
+  static String? getNextPageCursor(Map<String, dynamic> response) {
+    return getNumberParamFromLink(
+            Uri.decodeFull(response['links']['next']), 'page\\[cursor\\]') ??
+        getNumberParamFromLink(
+            Uri.decodeFull(response['links']['next']), 'page\\[number\\]');
   }
 }
