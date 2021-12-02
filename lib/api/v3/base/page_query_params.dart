@@ -38,6 +38,10 @@ class PageQueryParams extends JsonApiQueryParams.JsonApiQueryParams
 class Builder extends JsonApiQueryParams.Builder {
   PagingParamsV2? pagingParams;
 
+  withPagingParams(PagingParamsV2 pagingParams) {
+    this.pagingParams = pagingParams;
+  }
+
   @override
   JsonApiQueryParams.Builder withInclude(List<String>? include) {
     return super.withInclude(include);
