@@ -389,7 +389,7 @@ class KeyServer {
     try {
       var response =
           await keyValueStorageApiV3.getById(DEFAULT_SIGNER_ROLE_KEY_VALUE_KEY);
-      return (response['value']['u32']);
+      return (response['attributes']['value']['u32']);
     } catch (e) {
       throw StateError("Unable to obtain default role for signer " +
           "by key $DEFAULT_SIGNER_ROLE_KEY_VALUE_KEY");

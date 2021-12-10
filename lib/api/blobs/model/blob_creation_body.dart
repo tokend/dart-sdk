@@ -18,7 +18,7 @@ class BlobCreationRequestBody extends Blob {
   Map<String, dynamic> toJson() => {
         'id': id,
         'type': typeName,
-        'attributes': attributes,
+        'attributes': attributes.toJson(),
         'relationships': relationships?.toJson()
       };
 }
