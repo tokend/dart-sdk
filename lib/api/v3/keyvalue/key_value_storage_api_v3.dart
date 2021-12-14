@@ -7,7 +7,7 @@ class KeyValueStorageApiV3 {
   KeyValueStorageApiV3(this.customRequestsApi);
 
   /// Return key-value entries list page
-  Future<List<Map<String, dynamic>>> get({PagingParamsV2? params}) {
+  Future<List<dynamic>> get({PagingParamsV2? params}) {
     return customRequestsApi
         .get('v3/key_values', query: params?.map())
         .then((response) {
