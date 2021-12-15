@@ -15,7 +15,7 @@ class OffersPageParamsV3 extends pagingQuery.PageQueryParams {
   PagingParamsV2? pagingParamsV2;
 
   OffersPageParamsV3(
-      this.baseBalance,
+      {this.baseBalance,
       this.quoteBalance,
       this.baseAsset,
       this.quoteAsset,
@@ -23,7 +23,7 @@ class OffersPageParamsV3 extends pagingQuery.PageQueryParams {
       this.orderBook,
       this.isBuy,
       this.pagingParamsV2,
-      this.include)
+      this.include})
       : super(pagingParamsV2, include);
 
   @override
@@ -88,8 +88,16 @@ class OffersPageParamsBuilder extends pagingQuery.Builder {
 
   @override
   pagingQuery.PageQueryParams build() {
-    return OffersPageParamsV3(baseBalance, quoteBalance, baseAsset, quoteAsset,
-        ownerAccount, orderBook, isBuy, pagingParams, include);
+    return OffersPageParamsV3(
+        baseBalance: baseBalance,
+        quoteBalance: quoteBalance,
+        baseAsset: baseAsset,
+        quoteAsset: quoteAsset,
+        ownerAccount: ownerAccount,
+        orderBook: orderBook,
+        isBuy: isBuy,
+        pagingParamsV2: pagingParams,
+        include: include);
   }
 }
 
