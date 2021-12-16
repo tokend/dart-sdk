@@ -17,6 +17,10 @@ class OrderBookParamsBuilder extends jsonApiQueryParams.Builder {
   int? maxEntries;
   List<String>? include;
 
+  withMaxEntries(int maxEntries) {
+    this.maxEntries = maxEntries;
+  }
+
   @override
   jsonApiQueryParams.Builder withInclude(List<String>? include) {
     return super.withInclude(include);
