@@ -9,7 +9,7 @@ class OrderBookParamsV3 extends jsonApiQueryParams.JsonApiQueryParams {
 
   @override
   Map<String, dynamic> map() {
-    return map()..putFilter('max_entries', maxEntries);
+    return super.map()..putFilter('max_entries', maxEntries);
   }
 }
 

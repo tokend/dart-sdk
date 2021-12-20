@@ -28,7 +28,7 @@ class OffersPageParamsV3 extends pagingQuery.PageQueryParams {
 
   @override
   Map<String, dynamic> map() {
-    return map()
+    return super.map()
       ..putFilter('base_balance', baseBalance)
       ..putFilter('quote_balance', quoteBalance)
       ..putFilter('base_asset', baseAsset)

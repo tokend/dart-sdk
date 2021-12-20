@@ -40,7 +40,7 @@ class SalesPageParamsV3 extends pagingQuery.PageQueryParams {
 
   @override
   Map<String, dynamic> map() {
-    return map()
+    return super.map()
       ..putFilter('owner', owner)
       ..putFilter('min_start_time', minStartTime)
       ..putFilter('min_end_time', minEndTime)
