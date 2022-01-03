@@ -362,7 +362,7 @@ class _AnonymousTfaCallback extends TfaCallback {
   _AnonymousTfaCallback(this.email, this.password);
 
   @override
-  onTfaRequired(NeedTfaException exception, Interface verifierInterface) async {
+  onTfaRequired(NeedTfaException exception, TfaVerifierInterface verifierInterface) async {
     if (exception.factorType == TfaFactorType.PASSWORD) {
       verifierInterface.verify(
           await PasswordTfaOtpGenerator().generate(exception, email, password));

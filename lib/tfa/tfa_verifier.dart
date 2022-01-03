@@ -45,7 +45,7 @@ class TfaVerifier {
   }
 }
 
-abstract class Interface {
+abstract class TfaVerifierInterface {
   /// Performs OTP verification.
   /// If OTP was verified successfully original request will be completed.
   verify(String otp,
@@ -56,7 +56,7 @@ abstract class Interface {
   void cancelVerification();
 }
 
-class InterfaceImpl implements Interface {
+class InterfaceImpl implements TfaVerifierInterface {
   final TfaVerifier _tfaVerifier;
 
   InterfaceImpl(this._tfaVerifier);

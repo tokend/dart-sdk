@@ -2,12 +2,12 @@ import 'package:dart_sdk/api/base/model/forbidden_exception.dart';
 import 'package:dart_sdk/api/base/model/server_error.dart';
 import 'package:dart_sdk/api/tfa/model/tfa_factor.dart';
 
-class InvalidOpException implements Exception {
+class InvalidOtpException implements Exception {
   final String message;
 
-  const InvalidOpException([this.message = ""]);
+  const InvalidOtpException([this.message = ""]);
 
-  String toString() => "InvalidOpException: $message";
+  String toString() => "InvalidOtpException: $message";
 }
 
 class NeedTfaException extends ForbiddenException {

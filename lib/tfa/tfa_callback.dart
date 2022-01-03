@@ -8,5 +8,5 @@ abstract class TfaCallback {
   /// @param exception [NeedTfaException] with all required TFA error data
   /// @param verifierInterface communication object between TFA error handler and TFA verifier
   Future<void> onTfaRequired(NeedTfaException exception,
-      Interface verifierInterface);
+      TfaVerifierInterface verifierInterface);
 }
