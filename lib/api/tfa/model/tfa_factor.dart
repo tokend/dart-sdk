@@ -3,14 +3,14 @@ import 'package:flutter/foundation.dart';
 class TfaFactor {
   final int id;
   final String type;
-  final String priority;
+  final int priority;
 
   TfaFactor(this.id, this.type, this.priority);
 
   TfaFactor.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
+      : id = int.parse(json['id']),
         type = json['type'],
-        priority = json['priority'];
+        priority = json['attributes']['priority'];
 }
 
 enum TfaFactorType {
