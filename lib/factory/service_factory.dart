@@ -7,6 +7,7 @@ import 'package:dart_sdk/tfa/exceptions.dart';
 import 'package:dart_sdk/tfa/tfa_callback.dart';
 import 'package:dart_sdk/tfa/tfa_interceptor.dart';
 import 'package:dart_sdk/tfa/tfa_verification_service.dart';
+import 'package:dart_sdk/utils/extensions/long_strings.dart';
 import 'package:dio/dio.dart';
 
 class ServiceFactory {
@@ -28,8 +29,10 @@ class ServiceFactory {
     Dio _dio = Dio(options);
 
     if (_withLogs) {
-      _dio.interceptors
-          .add(LogInterceptor(responseBody: true, requestBody: true));
+      _dio.interceptors.add(LogInterceptor(
+          responseBody: true,
+          requestBody: true,
+          logPrint: (object) => '$object'.printLongString()));
     }
     if (requestSigner != null) {
       _dio.interceptors.add(SignInterceptor(_url, requestSigner));
