@@ -8,8 +8,12 @@ class MatchesPageParams extends pagingQuery.PageQueryParams {
   String? quoteAsset;
   String? orderBookId;
 
-  MatchesPageParams(this.baseAsset, this.quoteAsset, this.orderBookId,
-      PagingParamsV2? pagingParams, List<String>? include)
+  MatchesPageParams(
+      {this.baseAsset,
+      this.quoteAsset,
+      this.orderBookId,
+      PagingParamsV2? pagingParams,
+      List<String>? include})
       : super(pagingParams, include);
 
   @override
@@ -51,6 +55,10 @@ class MatchesPageParamsBuilder extends pagingQuery.Builder {
   @override
   pagingQuery.PageQueryParams build() {
     return MatchesPageParams(
-        baseAsset, quoteAsset, orderBookId, pagingParams, include);
+        baseAsset: baseAsset,
+        quoteAsset: quoteAsset,
+        orderBookId: orderBookId,
+        pagingParams: pagingParams,
+        include: include);
   }
 }
