@@ -21,7 +21,7 @@ class SalesPageParamsV3 extends pagingQuery.PageQueryParams {
   List<String>? include;
   PagingParamsV2? pagingParamsV2;
 
-  SalesPageParamsV3(
+  SalesPageParamsV3({
     this.owner,
     this.minStartTime,
     this.minEndTime,
@@ -36,7 +36,7 @@ class SalesPageParamsV3 extends pagingQuery.PageQueryParams {
     this.saleType,
     this.include,
     this.pagingParamsV2,
-  ) : super(pagingParamsV2, include);
+  }) : super(pagingParamsV2, include);
 
   @override
   Map<String, dynamic> map() {
@@ -132,20 +132,20 @@ class OffersPageParamsBuilder extends pagingQuery.Builder {
   @override
   pagingQuery.PageQueryParams build() {
     return SalesPageParamsV3(
-        owner,
-        minStartTime,
-        minEndTime,
-        maxStartTime,
-        maxEndTime,
-        saleState,
-        maxSoftCap,
-        maxHardCap,
-        minSoftCap,
-        minHardCap,
-        baseAsset,
-        saleType,
-        include,
-        pagingParams);
+        owner: owner,
+        minStartTime: minStartTime,
+        minEndTime: minEndTime,
+        maxStartTime: maxStartTime,
+        maxEndTime: maxEndTime,
+        saleState: saleState,
+        maxSoftCap: maxSoftCap,
+        maxHardCap: maxHardCap,
+        minSoftCap: minSoftCap,
+        minHardCap: minHardCap,
+        baseAsset: baseAsset,
+        saleType: saleType,
+        include: include,
+        pagingParamsV2: pagingParams);
   }
 }
 
