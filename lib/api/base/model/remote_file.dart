@@ -3,22 +3,22 @@ class RemoteFile {
   String key;
 
   /// Original name of the file with an extension
-  String name;
+  String? name;
 
   /// MIME (content) type of the file
   ///
   /// See <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">List of MIME types</a>
-  String mimeType;
+  String? mimeType;
 
   RemoteFile(this.key, this.name, this.mimeType);
 
   RemoteFile.fromJson(Map<String, dynamic> json)
       : key = json['key'],
         name = json['name'],
-        mimeType = json['mime_type'];
+        mimeType = json['type'];
 
   Map<String, dynamic> toJson() =>
-      {'key': key, 'name': name, 'mime_type': mimeType};
+      {'key': key, 'name': name, 'type': mimeType}; //some models use 'mime_type' as key
 
   String getUrl(String storageRoot) {
     var delimiter = '/';
@@ -28,7 +28,7 @@ class RemoteFile {
     return storageRoot + delimiter + key;
   }
 
-  bool get isImage => mimeType.contains('image/');
+  bool get isImage => mimeType?.contains('image/') == true;
 
   @override
   int get hashCode => key.hashCode;
@@ -45,7 +45,7 @@ extension NullFile on RemoteFile? {
   bool isReallyNullOrNullAccordingToTheJavascript() {
     return this == null ||
         this?.key.isEmpty == true ||
-        this?.name.isEmpty == true ||
-        this?.mimeType.isEmpty == true;
+        this?.name?.isEmpty == true ||
+        this?.mimeType?.isEmpty == true;
   }
 }
