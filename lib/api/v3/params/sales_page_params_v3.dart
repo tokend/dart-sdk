@@ -11,6 +11,12 @@ class SalesPageParamsV3 extends pagingQuery.PageQueryParams {
   DateTime? minEndTime;
   DateTime? maxStartTime;
   DateTime? maxEndTime;
+
+  /*
+  * 1- opened
+  * 2- closed
+  * 3- canceled
+  * */
   int? saleState;
   Decimal? maxSoftCap;
   Decimal? maxHardCap;

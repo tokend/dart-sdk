@@ -99,4 +99,16 @@ class DataPage<T> {
         getNumberParamFromLink(
             Uri.decodeFull(response['links']['next']), 'page\\[number\\]');
   }
+
+  static getDataPage(Map<String, dynamic> response, List<dynamic> items) {
+    var nextLink = Uri.decodeFull(response['links']['next']);
+
+    var limit =
+        int.parse(getNumberParamFromLink(nextLink, 'page\\[limit\\]') ?? "0");
+
+    var isLast = isLastOne(response, limit, items.length);
+
+    var nextCursor = getNextPageCursor(response);
+    return DataPage((nextCursor), items, isLast);
+  }
 }
