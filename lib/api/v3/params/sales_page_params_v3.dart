@@ -161,6 +161,6 @@ class SalesParams extends jsonApiQueryParams.JsonApiQueryParams {
   SalesParams(this.include) : super(include);
 
   static const BASE_ASSET = 'base_asset';
-  static const QUOTE_ASSET = 'quote_asset';
+  static const QUOTE_ASSET = 'quote_assets';
   static const DEFAULT_QUOTE_ASSET = 'default_quote_asset';
 }
