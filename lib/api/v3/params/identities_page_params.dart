@@ -12,8 +12,14 @@ class IdentitiesPageParams extends pagingQuery.PageQueryParams {
   List<String>? include;
   PagingParamsV2? pagingParams;
 
-  IdentitiesPageParams(this.email, this.address, this.phone, this.passport,
-      this.identifier, this.include, this.pagingParams)
+  IdentitiesPageParams(
+      {this.email,
+      this.address,
+      this.phone,
+      this.passport,
+      this.identifier,
+      this.include,
+      this.pagingParams})
       : super(pagingParams, include);
 
   @override
@@ -58,5 +64,11 @@ class IdentitiesPageParamsBuilder extends pagingQuery.Builder {
 
   @override
   pagingQuery.PageQueryParams build() => IdentitiesPageParams(
-      email, address, phone, passport, identifier, include, pagingParams);
+      email: email,
+      address: address,
+      phone: phone,
+      passport: passport,
+      identifier: identifier,
+      include: include,
+      pagingParams: pagingParams);
 }
